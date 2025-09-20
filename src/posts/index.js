@@ -26,8 +26,10 @@ require('./bookmarks')(Posts);
 require('./queue')(Posts);
 require('./diffs')(Posts);
 require('./uploads')(Posts);
+require('./answered')(Posts);
 
 Posts.attachments = require('./attachments');
+
 
 Posts.exists = async function (pids) {
 	return await db.exists(
