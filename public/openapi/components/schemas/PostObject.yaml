@@ -189,6 +189,8 @@ PostDataObject:
           type: number
         bookmarks:
           type: number
+        public:
+          type: number
         deleterUid:
           type: number
         edited:

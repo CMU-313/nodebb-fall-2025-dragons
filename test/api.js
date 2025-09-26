@@ -260,6 +260,14 @@ describe('API', async () => {
 			title: 'Test Topic 2',
 			content: 'Test topic 2 content',
 		});
+		// Provide a valid example pid for PUT /posts/{pid}/public
+		mocks.put['/posts/{pid}/public'] = [
+			{
+				in: 'path',
+				name: 'pid',
+				example: unprivTopic.postData.pid,
+			},
+		];
 		await topics.post({
 			uid: unprivUid,
 			cid: testCategory.cid,

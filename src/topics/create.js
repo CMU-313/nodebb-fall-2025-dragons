@@ -111,7 +111,8 @@ module.exports = function (Topics) {
 			throw new Error('[[error:no-category]]');
 		}
 
-		if (!canCreate || (!canTag && data.tags.length)) {
+		const isRemoteAuthor = activitypub.helpers.isUri(uid);
+		if ((!canCreate && !isRemoteAuthor) || ((!canTag && data.tags.length) && !isRemoteAuthor)) {
 			throw new Error('[[error:no-privileges]]');
 		}
 
