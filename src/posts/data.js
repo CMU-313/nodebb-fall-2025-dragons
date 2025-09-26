@@ -15,6 +15,9 @@ module.exports = function (Posts) {
 		if (!Array.isArray(pids) || !pids.length) {
 			return [];
 		}
+		if (Array.isArray(fields) && fields.length && !fields.includes('answered')) {
+			fields = fields.concat(['answered']);
+		}
 		const keys = pids.map(pid => `post:${pid}`);
 		const postData = await db.getObjects(keys, fields);
 		const result = await plugins.hooks.fire('filter:post.getFields', {
@@ -58,6 +61,12 @@ module.exports = function (Posts) {
 function modifyPost(post, fields) {
 	if (post) {
 		db.parseIntFields(post, intFields, fields);
+
+		// ADD THIS: always expose a boolean to callers if present
+		if (Object.prototype.hasOwnProperty.call(post, 'answered')) {
+			post.answered = !!post.answered;
+		}
+
 		if (post.hasOwnProperty('upvotes') && post.hasOwnProperty('downvotes')) {
 			post.votes = post.upvotes - post.downvotes;
 		}
