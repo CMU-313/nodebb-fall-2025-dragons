@@ -17,3 +17,10 @@ get:
           schema:
             properties: {}
             additionalProperties: {}
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            properties: {}
+            additionalProperties: {}
