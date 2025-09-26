@@ -1,0 +1,57 @@
+put:
+  tags:
+    - posts
+  summary: set post public flag
+  description: This operation sets a post's public flag (true/false). Only the post owner or an administrator may perform this action.
+  parameters:
+    - in: path
+      name: pid
+      schema:
+        type: string
+      required: true
+      description: a valid post id
+      example: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            public:
+              type: boolean
+              description: Whether the post should be marked public
+              example: true
+          required:
+            - public
+  responses:
+    '200':
+      description: Post public flag updated
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties:
+                  pid:
+                    type: number
+                    example: 1
+                  public:
+                    type: boolean
+                    example: true
+    '404':
+      description: Post not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties: {}

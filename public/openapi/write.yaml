@@ -194,6 +194,8 @@ paths:
     $ref: 'write/posts/pid/announcers-tooltip.yaml'
   /posts/{pid}/bookmark:
     $ref: 'write/posts/pid/bookmark.yaml'
+  /posts/{pid}/public:
+    $ref: 'write/posts/pid/public.yaml'
   /posts/{pid}/diffs:
     $ref: 'write/posts/pid/diffs.yaml'
   /posts/{pid}/diffs/{since}:

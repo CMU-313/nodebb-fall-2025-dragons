@@ -22,6 +22,38 @@ const notifications = require('../notifications');
 
 const postsAPI = module.exports;
 
+postsAPI.setPublic = async function (caller, data) {
+	if (!data || !data.pid || (typeof data.public === 'undefined')) {
+		throw new Error('[[error:invalid-data]]');
+	}
+	if (!caller.uid) {
+		throw new Error('[[error:not-logged-in]]');
+	}
+
+	const [exists, postOwnerUid, isAdmin] = await Promise.all([
+		posts.exists(data.pid),
+		posts.getPostField(data.pid, 'uid'),
+		privileges.users.isAdministrator(caller.uid),
+	]);
+
+	if (!exists) {
+		throw new Error('[[error:no-post]]');
+	}
+
+	const isOwner = parseInt(caller.uid, 10) === parseInt(postOwnerUid, 10);
+	if (!(isAdmin || isOwner)) {
+		throw new Error('[[error:no-privileges]]');
+	}
+
+	const raw = data.public;
+	const shouldBePublic = raw === true || raw === 1 || raw === '1' || (typeof raw === 'string' && raw.toLowerCase() === 'true');
+	const value = shouldBePublic ? 1 : 0;
+
+	await posts.setPostField(data.pid, 'public', value);
+
+	return { pid: data.pid, public: !!value };
+};
+
 postsAPI.get = async function (caller, data) {
 	const [userPrivileges, post, voted] = await Promise.all([
 		privileges.posts.get([data.pid], caller.uid),

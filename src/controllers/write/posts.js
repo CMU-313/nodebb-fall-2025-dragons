@@ -163,6 +163,14 @@ Posts.unbookmark = async (req, res) => {
 	helpers.formatApiResponse(200, res);
 };
 
+Posts.setPublic = async (req, res) => {
+	const result = await api.posts.setPublic(req, {
+		pid: req.params.pid,
+		public: req.body.public,
+	});
+	helpers.formatApiResponse(200, res, result);
+};
+
 Posts.getDiffs = async (req, res) => {
 	helpers.formatApiResponse(200, res, await api.posts.getDiffs(req, { ...req.params }));
 };
