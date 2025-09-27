@@ -268,6 +268,39 @@ describe('Post\'s', () => {
 		});
 	});
 
+	it('should allow owner to set post public', async () => {
+		const ownerUid = await user.create({ username: 'public-owner', password: 'public-owner' });
+		const { topicData, postData: created } = await topics.post({ uid: ownerUid, cid, title: 'public test', content: 'public content' });
+		const result = await require('../src/api/posts').setPublic({ uid: ownerUid }, { pid: created.pid, public: true });
+		assert.strictEqual(result.public, true);
+		const stored = await posts.getPostField(created.pid, 'public');
+		assert.strictEqual(stored, 1);
+	});
+
+	it('should disallow non-owner non-admin to set post public', async () => {
+		const ownerUid = await user.create({ username: 'public-owner-2' });
+		const otherUid = await user.create({ username: 'public-other' });
+		const { postData: created } = await topics.post({ uid: ownerUid, cid, title: 'public test 2', content: 'public content 2' });
+		let err;
+		try {
+			await require('../src/api/posts').setPublic({ uid: otherUid }, { pid: created.pid, public: true });
+		} catch (_err) {
+			err = _err;
+		}
+		assert.strictEqual(err && err.message, '[[error:no-privileges]]');
+	});
+
+	it('should allow admin to set post public', async () => {
+		const adminUid = await user.create({ username: 'public-admin' });
+		await groups.join('administrators', adminUid);
+		const ownerUid = await user.create({ username: 'public-owner-3' });
+		const { postData: created } = await topics.post({ uid: ownerUid, cid, title: 'public test 3', content: 'public content 3' });
+		const result = await require('../src/api/posts').setPublic({ uid: adminUid }, { pid: created.pid, public: false });
+		assert.strictEqual(result.public, false);
+		const stored = await posts.getPostField(created.pid, 'public');
+		assert.strictEqual(stored, 0);
+	});
+
 	describe('bookmarking', () => {
 		it('should bookmark a post', async () => {
 			const data = await apiPosts.bookmark({ uid: voterUid }, { pid: postData.pid, room_id: `topic_${postData.tid}` });
