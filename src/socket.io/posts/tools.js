@@ -11,6 +11,7 @@ const plugins = require('../../plugins');
 const social = require('../../social');
 const user = require('../../user');
 const utils = require('../../utils');
+const websockets = require('../index');
 
 module.exports = function (SocketPosts) {
 	SocketPosts.loadPostTools = async function (socket, data) {
@@ -19,7 +20,7 @@ module.exports = function (SocketPosts) {
 		}
 		const cid = await posts.getCidByPid(data.pid);
 		const results = await utils.promiseParallel({
-			posts: posts.getPostFields(data.pid, ['deleted', 'bookmarks', 'uid', 'ip', 'flagId', 'url']),
+			posts: posts.getPostFields(data.pid, ['deleted', 'bookmarks', 'uid', 'ip', 'flagId', 'url', 'answered']),
 			isAdmin: user.isAdministrator(socket.uid),
 			isGlobalMod: user.isGlobalModerator(socket.uid),
 			isModerator: user.isModerator(socket.uid, cid),
@@ -104,6 +105,80 @@ module.exports = function (SocketPosts) {
 		const editorUids = await db.getSetMembers(`pid:${data.pid}:editors`);
 		const userData = await user.getUsersFields(editorUids, ['username', 'userslug', 'picture']);
 		return userData;
+	};
+
+	SocketPosts.toggleAnswered = async function (socket, data) {
+		if (!data || !data.pid) {
+			throw new Error('[[error:invalid-data]]');
+		}
+		const {pid} = data;
+		// enforce same privilege as flagging (visibility driven by canFlag)
+		const canFlag = await privileges.posts.canFlag(pid, socket.uid);
+		if (!canFlag || !canFlag.flag) {
+			throw new Error('[[error:no-privileges]]');
+		}
+
+		// read current state and toggle
+		const tid = await posts.getPostField(pid, 'tid');
+		const current = await posts.getPostField(pid, 'answered');
+		const newVal = !parseInt(current, 10);
+
+		// Debug: log the toggle attempt for diagnosis
+		try {
+			console.log('[posts.toggleAnswered] pid=%s current=%s newVal=%s uid=%s', pid, current, newVal, socket && socket.uid);
+		} catch (e) {
+			// ignore logging errors
+		}
+		// If Posts.answered helper exists, use it. Otherwise fall back to direct DB ops.
+		if (posts.answered && typeof posts.answered.set === 'function') {
+			await posts.answered.set(pid, newVal);
+		} else {
+			// fallback: set post field and update sorted sets
+			const tid = await posts.getPostField(pid, 'tid');
+			await posts.setPostField(pid, 'answered', newVal ? 1 : 0);
+			try {
+				console.log('[posts.toggleAnswered] persisted fallback set post:%s.answered=%s', pid, newVal ? 1 : 0);
+			} catch (e) {
+				// ignore
+			}
+			if (newVal) {
+				const score = Date.now();
+				await db.sortedSetAdd('posts:answered', score, pid);
+				await db.sortedSetAdd(`tid:${tid}:answered`, score, pid);
+			} else {
+				await db.sortedSetRemove('posts:answered', pid);
+				await db.sortedSetRemove(`tid:${tid}:answered`, pid);
+			}
+		}
+
+		// notify topic room so other clients can update in realtime
+		try {
+			if (tid) {
+				websockets.in(`topic_${tid}`).emit('event:post_answered', { pid: pid, answered: newVal, tid });
+				try { console.log('[posts.toggleAnswered] emitted event:post_answered to topic_%s payload=%j', tid, { pid: pid, answered: newVal, tid }); } catch (e) {}
+			}
+			// Also emit to the category room so category lists can update in realtime
+			try {
+				const cid = await posts.getCidByPid(pid);
+				if (cid) {
+					websockets.in(`category_${cid}`).emit('event:post_answered', { pid: pid, answered: newVal, tid, cid });
+					try { console.log('[posts.toggleAnswered] emitted event:post_answered to category_%s payload=%j', cid, { pid: pid, answered: newVal, tid, cid }); } catch (e) {}
+				}
+			} catch (e) {
+				// non-fatal
+			}
+
+			// Fire plugin hook for answered state change
+			try {
+				await plugins.hooks.fire('action:post.answered', { pid, answered: newVal, tid, uid: socket.uid });
+			} catch (e) {
+				// non-fatal
+			}
+		} catch (e) {
+			// non-fatal
+		}
+
+		return { answered: newVal };
 	};
 
 	SocketPosts.saveEditors = async function (socket, data) {

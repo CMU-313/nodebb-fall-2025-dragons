@@ -184,6 +184,34 @@ define('forum/topic/postTools', [
 			});
 		});
 
+		// Mark/unmark answered
+		postContainer.on('click', '[component="post/mark-answered"]', function (e) {
+			e.preventDefault();
+			const btn = $(this);
+			const pid = getData(btn, 'data-pid');
+			if (!pid) {
+				return;
+			}
+			btn.attr('disabled', 'disabled');
+			socket.emit('posts.toggleAnswered', { pid: pid }, function (err, data) {
+				btn.removeAttr('disabled');
+				if (err) {
+					return alerts.error(err);
+				}
+				const answered = data && data.answered;
+				btn.attr('data-answered', answered ? '1' : '0');
+				const labelEl = btn.find('.mark-answered-label');
+				if (labelEl.length) {
+					labelEl.text(answered ? 'Mark Unanswered' : 'Mark Answered');
+				}
+
+				// UI update will happen from the socket event handler for this topic;
+				// no immediate DOM insertion here to avoid duplicate insertions.
+
+				hooks.fire('action:post.answered.toggled', { pid: pid, answered: answered });
+			});
+		});
+
 		postContainer.on('click', '[component="post/edit"]', function () {
 			const btn = $(this);
 

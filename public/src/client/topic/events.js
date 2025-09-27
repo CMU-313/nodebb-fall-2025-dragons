@@ -36,6 +36,7 @@ define('forum/topic/events', [
 
 		'event:post_deleted': togglePostDeleteState,
 		'event:post_restored': togglePostDeleteState,
+		'event:post_answered': onPostAnswered,
 
 		'posts.bookmark': togglePostBookmark,
 		'posts.unbookmark': togglePostBookmark,
@@ -177,6 +178,76 @@ define('forum/topic/events', [
 		}
 
 		postTools.removeMenu(components.get('post', 'pid', data.post.pid));
+	}
+
+	function onPostAnswered(data) {
+		if (!data || !data.pid || (String(data.tid) !== String(ajaxify.data.tid) && data.tid !== undefined)) {
+			// If tid present and different, ignore. If tid omitted, still act on pid in current page.
+			if (data.tid !== undefined && String(data.tid) !== String(ajaxify.data.tid)) {
+				return;
+			}
+		}
+		const pid = data.pid;
+		const answered = !!data.answered;
+		// Update post (remove any existing badge anywhere inside the post), then append once
+		const postEl = components.get('post', 'pid', pid);
+		// If post DOM is not present (race/navigation), fetch DB-backed post state
+		// and re-run this handler once to ensure the page reflects persisted state.
+		// Use a guard flag to avoid repeated fetch loops.
+		if ((!postEl || !postEl.length) && !data._fromFetch) {
+			fetch(config.relative_path + '/api/post/' + pid, { credentials: 'same-origin' })
+				.then(function (res) { if (!res.ok) throw new Error('post fetch failed'); return res.json(); })
+				.then(function (body) {
+					if (body && body.post) {
+						onPostAnswered({ pid: pid, tid: body.post.tid, answered: !!body.post.answered, _fromFetch: true });
+					}
+				})
+				.catch(function (err) {
+					console.warn('[topic/events] post fetch failed for pid=', pid, err);
+				});
+
+			// Defer further UI updates to the DB-backed callback above.
+			return;
+		}
+		if (postEl && postEl.length) {
+			// remove any existing badges inside this post (covers static + dynamic)
+			postEl.find('.post-answered-badge').remove();
+
+			if (answered) {
+				// Prefer inserting after the post time (e.g. "7 hours ago") so the
+				// badge appears near the timestamp instead of after the post index (#1).
+				// Prefer the teaser timeago if present in the post header
+				let timeEl = postEl.find('.post-header .timeago').first();
+				if (!timeEl || !timeEl.length) {
+					timeEl = postEl.find('.meta.teaser .timeago').first();
+				}
+				if (timeEl && timeEl.length) {
+					timeEl.after('<span class="ms-2 text-success fw-bold post-answered-badge">ANSWERED</span>');
+				} else {
+					// Fallback: append to the header container
+					const headerTarget = postEl.find('.post-header').first();
+					if (headerTarget.length) {
+						headerTarget.append('<span class="ms-2 text-success fw-bold post-answered-badge">ANSWERED</span>');
+					}
+				}
+			}
+		}
+
+		// Update parent previews (single insertion point)
+		const parentEl = $(`[component="post/parent"][data-parent-pid="${pid}"]`);
+		if (parentEl.length) {
+			parentEl.find('.post-answered-badge').remove();
+			if (answered) {
+				const parentTime = parentEl.find('.timeago').first();
+				if (parentTime.length) {
+					parentTime.after('<span class="ms-2 text-success fw-bold post-answered-badge">ANSWERED</span>');
+				} else {
+					parentEl.find('.d-flex.gap-2.text-nowrap').first().append('<span class="ms-2 text-success fw-bold post-answered-badge">ANSWERED</span>');
+				}
+			}
+		}
+
+		hooks.fire('action:posts.answered', data);
 	}
 
 	function onPostPurged(postData) {
