@@ -8,6 +8,13 @@ module.exports = function (Posts) {
 
 	Posts.answered.set = async (pid, answered) => {
 		console.log('[answered] set start pid=%s answered=%s', pid, answered);
+		
+		// Only allow main posts to be marked as answered
+		const isMainPost = await Posts.isMain(pid);
+		if (!isMainPost) {
+			throw new Error('[[error:only-main-posts-can-be-answered]]');
+		}
+		
 		const tid = await Posts.getPostField(pid, 'tid');
 		await db.setObjectField(`post:${pid}`, 'answered', answered ? 1 : 0);
 		if (answered) {

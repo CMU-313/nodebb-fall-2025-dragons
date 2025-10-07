@@ -14,10 +14,16 @@ const plugins = require('../plugins');
 
 Posts.setAnswered = async function setAnswered(pid, answered /*, actorUid */) {
 	// These helpers are attached by ./data later — but we just *call* them at runtime,
-	// after all requires finish. It’s safe.
+	// after all requires finish. It's safe.
 	const fields = await Posts.getPostFields(pid, ['tid', 'timestamp', 'deleted', 'answered']);
 	if (!fields || !fields.tid) {
 		throw new Error('[[error:no-post]]');
+	}
+
+	// Only allow main posts to be marked as answered
+	const isMainPost = await Posts.isMain(pid);
+	if (!isMainPost) {
+		throw new Error('[[error:only-main-posts-can-be-answered]]');
 	}
 
 	const tid = Number(fields.tid);
