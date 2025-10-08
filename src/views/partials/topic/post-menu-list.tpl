@@ -48,6 +48,20 @@
 </li>
 {{{ end }}}
 
+{{{ if (./index === 0) }}}
+<li class="dropdown-divider"></li>
+<li {{{ if posts.answered }}}hidden{{{ end }}}>
+	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/mark-answered" role="menuitem" href="#">
+		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-check-circle"></i></span> [[topic:mark-answered]]
+	</a>
+</li>
+<li {{{ if !posts.answered }}}hidden{{{ end }}}>
+	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/mark-unanswered" role="menuitem" href="#">
+		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-times-circle"></i></span> [[topic:mark-unanswered]]
+	</a>
+</li>
+{{{ end }}}
+
 {{{ if posts.ip }}}
 <li>
 	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/copy-ip" role="menuitem" href="#" data-clipboard-text="{posts.ip}">
