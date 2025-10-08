@@ -239,7 +239,7 @@ Posts.getByAnsweredStatus = async (req, res) => {
 	const data = await api.posts.getByAnsweredStatus(req, { 
 		start: parseInt(start), 
 		stop: parseInt(stop), 
-		answered: answeredBool 
+		answered: answeredBool, 
 	});
 	helpers.formatApiResponse(200, res, data);
 };

@@ -49,7 +49,7 @@ module.exports = function (Posts) {
 		// Get all main posts (from topics) that are not deleted
 		const allTids = await db.getSortedSetRange('topics:tid', 0, -1);
 		const topicData = await Promise.all(
-			allTids.map(async tid => {
+			allTids.map(async (tid) => {
 				const topic = await db.getObjectFields(`topic:${tid}`, ['mainPid', 'deleted', 'cid']);
 				return { tid, ...topic };
 			})
@@ -76,9 +76,9 @@ module.exports = function (Posts) {
 	Posts.answered.getByStatus = async function (answered, start, stop, uid) {
 		if (answered) {
 			return await Posts.answered.getAnswered(start, stop, uid);
-		} else {
-			return await Posts.answered.getUnanswered(start, stop, uid);
-		}
+		} 
+		return await Posts.answered.getUnanswered(start, stop, uid);
+		
 	};
 
 	// Get count of answered posts
@@ -91,7 +91,7 @@ module.exports = function (Posts) {
 		// Get all main posts (from topics) that are not deleted
 		const allTids = await db.getSortedSetRange('topics:tid', 0, -1);
 		const topicData = await Promise.all(
-			allTids.map(async tid => {
+			allTids.map(async (tid) => {
 				const topic = await db.getObjectFields(`topic:${tid}`, ['mainPid', 'deleted']);
 				return { tid, ...topic };
 			})

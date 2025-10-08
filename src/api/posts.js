@@ -739,7 +739,7 @@ postsAPI.getAnswered = async function (caller, data) {
 			enhancedPosts = await user.blocks.filter(uid, enhancedPosts);
 			
 			// Filter posts to only include essential properties defined in schema
-			enhancedPosts = enhancedPosts.map(post => {
+			enhancedPosts = enhancedPosts.map((post) => {
 				return {
 					pid: post.pid,
 					tid: post.tid,
@@ -750,8 +750,8 @@ postsAPI.getAnswered = async function (caller, data) {
 					user: {
 						uid: post.user?.uid,
 						username: post.user?.username,
-						displayname: post.user?.displayname
-					}
+						displayname: post.user?.displayname,
+					},
 				};
 			});
 		}
@@ -760,7 +760,7 @@ postsAPI.getAnswered = async function (caller, data) {
 			posts: enhancedPosts || [],
 			count: count || 0,
 			nextStart: stop + 1,
-			hasMore: (count || 0) > stop + 1
+			hasMore: (count || 0) > stop + 1,
 		};
 	} catch (error) {
 		console.error('Error in getAnswered API:', error);
@@ -790,7 +790,7 @@ postsAPI.getUnanswered = async function (caller, data) {
 			enhancedPosts = await user.blocks.filter(uid, enhancedPosts);
 			
 			// Filter posts to only include essential properties defined in schema
-			enhancedPosts = enhancedPosts.map(post => {
+			enhancedPosts = enhancedPosts.map((post) => {
 				return {
 					pid: post.pid,
 					tid: post.tid,
@@ -801,8 +801,8 @@ postsAPI.getUnanswered = async function (caller, data) {
 					user: {
 						uid: post.user?.uid,
 						username: post.user?.username,
-						displayname: post.user?.displayname
-					}
+						displayname: post.user?.displayname,
+					},
 				};
 			});
 		}
@@ -811,7 +811,7 @@ postsAPI.getUnanswered = async function (caller, data) {
 			posts: enhancedPosts || [],
 			count: count || 0,
 			nextStart: stop + 1,
-			hasMore: (count || 0) > stop + 1
+			hasMore: (count || 0) > stop + 1,
 		};
 	} catch (error) {
 		console.error('Error in getUnanswered API:', error);
@@ -847,7 +847,7 @@ postsAPI.getByAnsweredStatus = async function (caller, data) {
 			enhancedPosts = await user.blocks.filter(uid, enhancedPosts);
 			
 			// Filter posts to only include essential properties defined in schema
-			enhancedPosts = enhancedPosts.map(post => {
+			enhancedPosts = enhancedPosts.map((post) => {
 				return {
 					pid: post.pid,
 					tid: post.tid,
@@ -858,8 +858,8 @@ postsAPI.getByAnsweredStatus = async function (caller, data) {
 					user: {
 						uid: post.user?.uid,
 						username: post.user?.username,
-						displayname: post.user?.displayname
-					}
+						displayname: post.user?.displayname,
+					},
 				};
 			});
 		}
@@ -868,7 +868,7 @@ postsAPI.getByAnsweredStatus = async function (caller, data) {
 			posts: enhancedPosts || [],
 			count: count || 0,
 			nextStart: stop + 1,
-			hasMore: (count || 0) > stop + 1
+			hasMore: (count || 0) > stop + 1,
 		};
 	} catch (error) {
 		console.error('Error in getByAnsweredStatus API:', error);
