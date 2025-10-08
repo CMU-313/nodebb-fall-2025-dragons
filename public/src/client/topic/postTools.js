@@ -289,6 +289,14 @@ define('forum/topic/postTools', [
 		postContainer.on('click', '[component="post/chat"]', function () {
 			openChat($(this));
 		});
+
+		postContainer.on('click', '[component="post/mark-answered"]', function () {
+			markPostAnswered($(this));
+		});
+
+		postContainer.on('click', '[component="post/mark-unanswered"]', function () {
+			markPostUnanswered($(this));
+		});
 	}
 
 	async function onReplyClicked(button, tid) {
@@ -571,6 +579,46 @@ define('forum/topic/postTools', [
 				left: tooltipWidth > lastRect.width ? lastRect.left : lastRect.left + lastRect.width - tooltipWidth,
 			});
 		}
+	}
+
+	function markPostAnswered(button) {
+		const pid = getData(button, 'data-pid');
+		const postEl = components.get('post', 'pid', pid);
+		
+		api.post(`/posts/${encodeURIComponent(pid)}/answered`, {}, function (err, data) {
+			if (err) {
+				return alerts.error(err);
+			}
+			
+			// Update the answered badge
+			postEl.find('[component="post/answered-badge"]').removeClass('hidden');
+			
+			// Update menu items
+			postEl.find('[component="post/mark-answered"]').parent().addClass('hidden');
+			postEl.find('[component="post/mark-unanswered"]').parent().removeClass('hidden');
+			
+			alerts.success('[[topic:post-marked-answered]]');
+		});
+	}
+
+	function markPostUnanswered(button) {
+		const pid = getData(button, 'data-pid');
+		const postEl = components.get('post', 'pid', pid);
+		
+		api.del(`/posts/${encodeURIComponent(pid)}/answered`, function (err, data) {
+			if (err) {
+				return alerts.error(err);
+			}
+			
+			// Hide the answered badge
+			postEl.find('[component="post/answered-badge"]').addClass('hidden');
+			
+			// Update menu items
+			postEl.find('[component="post/mark-answered"]').parent().removeClass('hidden');
+			postEl.find('[component="post/mark-unanswered"]').parent().addClass('hidden');
+			
+			alerts.success('[[topic:post-marked-unanswered]]');
+		});
 	}
 
 	return PostTools;

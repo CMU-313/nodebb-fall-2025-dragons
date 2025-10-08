@@ -46,8 +46,8 @@
 					<a class="fw-bold text-nowrap text-truncate" href="{{{ if ./user.userslug }}}{config.relative_path}/user/{./user.userslug}{{{ else }}}#{{{ end }}}" data-username="{posts.user.username}" data-uid="{posts.user.uid}">{posts.user.displayname}</a>
 				</div>
 
-				{{{ if (./index === 0 && posts.answered) }}}
-				<span class="badge bg-success text-white fw-bold px-2 py-1" title="[[topic:post-answered]]">ANSWERED</span>
+				{{{ if (./index === 0) }}}
+				<span component="post/answered-badge" class="badge bg-success text-white fw-bold px-2 py-1 {{{ if !posts.answered }}}hidden{{{ end }}}" title="[[topic:post-answered]]">ANSWERED</span>
 				{{{ end }}}
 
 				{{{ each posts.user.selectedGroups }}}
