@@ -25,12 +25,34 @@ module.exports = function (Posts) {
 		const fields = [
 			'pid', 'tid', 'toPid', 'url', 'content', 'sourceContent', 
 			'uid', 'timestamp', 'deleted', 'upvotes', 'downvotes', 
-			'replies', 'handle', 'answered',
+			'replies', 'handle', 'answered', 'public',
 		].concat(options.extraFields);
 
 		let posts = await Posts.getPostsFields(pids, fields);
 		posts = posts.filter(Boolean);
 		posts = await user.blocks.filter(uid, posts);
+		
+		// Filter out private posts for non-admins and non-owners
+		if (uid) {
+			const isAdmin = await user.isAdministrator(uid);
+			posts = posts.filter((post) => {
+				if (!post) return false;
+				
+				// If post is public (or public field is undefined/null), show it
+				if (post.public === undefined || post.public === null || post.public === 1) {
+					return true;
+				}
+				
+				// If post is private, only show to admins or post owners
+				const isPostOwner = parseInt(post.uid, 10) === parseInt(uid, 10);
+				return isAdmin || isPostOwner;
+			});
+		} else {
+			// For guests, only show public posts
+			posts = posts.filter((post) => {
+				return post && (post.public === undefined || post.public === null || post.public === 1);
+			});
+		}
 
 		const uids = _.uniq(posts.map(p => p && p.uid));
 		const tids = _.uniq(posts.map(p => p && p.tid));
