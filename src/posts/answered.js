@@ -46,14 +46,19 @@ module.exports = function (Posts) {
 
 	// Get unanswered posts (main posts that are not answered)
 	Posts.answered.getUnanswered = async function (start, stop, uid) {
-		// Get all main posts (from topics)
+		// Get all main posts (from topics) that are not deleted
 		const allTids = await db.getSortedSetRange('topics:tid', 0, -1);
-		const mainPids = await Promise.all(
-			allTids.map(tid => db.getObjectField(`topic:${tid}`, 'mainPid'))
+		const topicData = await Promise.all(
+			allTids.map(async tid => {
+				const topic = await db.getObjectFields(`topic:${tid}`, ['mainPid', 'deleted', 'cid']);
+				return { tid, ...topic };
+			})
 		);
 		
-		// Filter out null/undefined mainPids
-		const validMainPids = mainPids.filter(pid => pid);
+		// Filter out deleted topics and get valid main PIDs
+		const validMainPids = topicData
+			.filter(topic => topic.mainPid && !topic.deleted)
+			.map(topic => topic.mainPid);
 		
 		// Get answered PIDs
 		const answeredPids = await db.getSortedSetMembers('posts:answered');
@@ -83,8 +88,26 @@ module.exports = function (Posts) {
 
 	// Get count of unanswered posts
 	Posts.answered.getUnansweredCount = async function () {
-		const allTids = await db.sortedSetCard('topics:tid');
-		const answeredCount = await Posts.answered.getAnsweredCount();
-		return allTids - answeredCount;
+		// Get all main posts (from topics) that are not deleted
+		const allTids = await db.getSortedSetRange('topics:tid', 0, -1);
+		const topicData = await Promise.all(
+			allTids.map(async tid => {
+				const topic = await db.getObjectFields(`topic:${tid}`, ['mainPid', 'deleted']);
+				return { tid, ...topic };
+			})
+		);
+		
+		// Filter out deleted topics and get valid main PIDs
+		const validMainPids = topicData
+			.filter(topic => topic.mainPid && !topic.deleted)
+			.map(topic => topic.mainPid);
+		
+		// Get answered PIDs
+		const answeredPids = await db.getSortedSetMembers('posts:answered');
+		
+		// Count unanswered main posts
+		const unansweredPids = validMainPids.filter(pid => !answeredPids.includes(pid));
+		
+		return unansweredPids.length;
 	};
 };

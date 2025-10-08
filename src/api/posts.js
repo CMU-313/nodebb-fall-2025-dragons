@@ -718,46 +718,160 @@ async function sendQueueNotification(type, targetUid, path, notificationText) {
 
 // Answered posts filtering API endpoints
 postsAPI.getAnswered = async function (caller, data) {
-	const { start = 0, stop = 19 } = data;
-	const postsData = await posts.answered.getAnswered(start, stop, caller.uid);
-	const count = await posts.answered.getAnsweredCount();
-	
-	return {
-		posts: postsData,
-		count: count,
-		nextStart: stop + 1,
-		hasMore: count > stop + 1
-	};
+	try {
+		const { start = 0, stop = 19 } = data;
+		const uid = caller ? caller.uid : 0;
+		const postsData = await posts.answered.getAnswered(start, stop, uid);
+		const count = await posts.answered.getAnsweredCount();
+		
+		// Add user and topic data to posts, and process privileges
+		let enhancedPosts = postsData ? await topics.addPostData(postsData, uid) : [];
+		
+		// Get privileges and filter posts
+		if (enhancedPosts.length > 0) {
+			const postPrivileges = await privileges.posts.get(enhancedPosts.map(p => p.pid), uid);
+			enhancedPosts.forEach((post, index) => {
+				posts.modifyPostByPrivilege(post, postPrivileges[index]);
+				// Add required properties for schema compliance
+				post.index = start + index;
+			});
+			enhancedPosts = enhancedPosts.filter((post, index) => post && postPrivileges[index].read);
+			enhancedPosts = await user.blocks.filter(uid, enhancedPosts);
+			
+			// Filter posts to only include essential properties defined in schema
+			enhancedPosts = enhancedPosts.map(post => {
+				return {
+					pid: post.pid,
+					tid: post.tid,
+					content: post.content,
+					answered: post.answered,
+					timestamp: post.timestamp,
+					timestampISO: post.timestampISO,
+					user: {
+						uid: post.user?.uid,
+						username: post.user?.username,
+						displayname: post.user?.displayname
+					}
+				};
+			});
+		}
+		
+		return {
+			posts: enhancedPosts || [],
+			count: count || 0,
+			nextStart: stop + 1,
+			hasMore: (count || 0) > stop + 1
+		};
+	} catch (error) {
+		console.error('Error in getAnswered API:', error);
+		throw error;
+	}
 };
 
 postsAPI.getUnanswered = async function (caller, data) {
-	const { start = 0, stop = 19 } = data;
-	const postsData = await posts.answered.getUnanswered(start, stop, caller.uid);
-	const count = await posts.answered.getUnansweredCount();
-	
-	return {
-		posts: postsData,
-		count: count,
-		nextStart: stop + 1,
-		hasMore: count > stop + 1
-	};
+	try {
+		const { start = 0, stop = 19 } = data;
+		const uid = caller ? caller.uid : 0;
+		const postsData = await posts.answered.getUnanswered(start, stop, uid);
+		const count = await posts.answered.getUnansweredCount();
+
+		// Add user and topic data to posts, and process privileges
+		let enhancedPosts = postsData ? await topics.addPostData(postsData, uid) : [];
+		
+		// Get privileges and filter posts
+		if (enhancedPosts.length > 0) {
+			const postPrivileges = await privileges.posts.get(enhancedPosts.map(p => p.pid), uid);
+			enhancedPosts.forEach((post, index) => {
+				posts.modifyPostByPrivilege(post, postPrivileges[index]);
+				// Add required properties for schema compliance
+				post.index = start + index;
+			});
+			enhancedPosts = enhancedPosts.filter((post, index) => post && postPrivileges[index].read);
+			enhancedPosts = await user.blocks.filter(uid, enhancedPosts);
+			
+			// Filter posts to only include essential properties defined in schema
+			enhancedPosts = enhancedPosts.map(post => {
+				return {
+					pid: post.pid,
+					tid: post.tid,
+					content: post.content,
+					answered: post.answered,
+					timestamp: post.timestamp,
+					timestampISO: post.timestampISO,
+					user: {
+						uid: post.user?.uid,
+						username: post.user?.username,
+						displayname: post.user?.displayname
+					}
+				};
+			});
+		}
+
+		return {
+			posts: enhancedPosts || [],
+			count: count || 0,
+			nextStart: stop + 1,
+			hasMore: (count || 0) > stop + 1
+		};
+	} catch (error) {
+		console.error('Error in getUnanswered API:', error);
+		throw error;
+	}
 };
 
 postsAPI.getByAnsweredStatus = async function (caller, data) {
-	const { answered, start = 0, stop = 19 } = data;
-	if (typeof answered !== 'boolean') {
-		throw new Error('[[error:invalid-answered-status]]');
+	try {
+		const { answered, start = 0, stop = 19 } = data;
+		if (typeof answered !== 'boolean') {
+			throw new Error('[[error:invalid-answered-status]]');
+		}
+
+		const uid = caller ? caller.uid : 0;
+		const postsData = await posts.answered.getByStatus(answered, start, stop, uid);
+		const count = answered ?
+			await posts.answered.getAnsweredCount() :
+			await posts.answered.getUnansweredCount();
+
+		// Add user and topic data to posts, and process privileges
+		let enhancedPosts = postsData ? await topics.addPostData(postsData, uid) : [];
+		
+		// Get privileges and filter posts
+		if (enhancedPosts.length > 0) {
+			const postPrivileges = await privileges.posts.get(enhancedPosts.map(p => p.pid), uid);
+			enhancedPosts.forEach((post, index) => {
+				posts.modifyPostByPrivilege(post, postPrivileges[index]);
+				// Add required properties for schema compliance
+				post.index = start + index;
+			});
+			enhancedPosts = enhancedPosts.filter((post, index) => post && postPrivileges[index].read);
+			enhancedPosts = await user.blocks.filter(uid, enhancedPosts);
+			
+			// Filter posts to only include essential properties defined in schema
+			enhancedPosts = enhancedPosts.map(post => {
+				return {
+					pid: post.pid,
+					tid: post.tid,
+					content: post.content,
+					answered: post.answered,
+					timestamp: post.timestamp,
+					timestampISO: post.timestampISO,
+					user: {
+						uid: post.user?.uid,
+						username: post.user?.username,
+						displayname: post.user?.displayname
+					}
+				};
+			});
+		}
+
+		return {
+			posts: enhancedPosts || [],
+			count: count || 0,
+			nextStart: stop + 1,
+			hasMore: (count || 0) > stop + 1
+		};
+	} catch (error) {
+		console.error('Error in getByAnsweredStatus API:', error);
+		throw error;
 	}
-	
-	const postsData = await posts.answered.getByStatus(answered, start, stop, caller.uid);
-	const count = answered ? 
-		await posts.answered.getAnsweredCount() : 
-		await posts.answered.getUnansweredCount();
-	
-	return {
-		posts: postsData,
-		count: count,
-		nextStart: stop + 1,
-		hasMore: count > stop + 1
-	};
 };
