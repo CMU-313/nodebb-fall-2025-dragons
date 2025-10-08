@@ -54,5 +54,10 @@ module.exports = function () {
 	// Shorthand route to access post routes by topic index
 	router.all('/+byIndex/:index*?', [middleware.checkRequired.bind(null, ['tid'])], controllers.write.posts.redirectByIndex);
 
+	// Answered posts filtering routes
+	setupApiRoute(router, 'get', '/answered', [middleware.assert.post], controllers.write.posts.getAnswered);
+	setupApiRoute(router, 'get', '/unanswered', [middleware.assert.post], controllers.write.posts.getUnanswered);
+	setupApiRoute(router, 'get', '/filter/answered', [middleware.assert.post], controllers.write.posts.getByAnsweredStatus);
+
 	return router;
 };
