@@ -1,0 +1,87 @@
+get:
+  tags:
+    - posts
+  summary: Get unanswered posts
+  description: Retrieve a paginated list of posts that have not been marked as answered
+  parameters:
+    - name: start
+      in: query
+      description: Starting index for pagination
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      example: 0
+    - name: stop
+      in: query
+      description: Ending index for pagination
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 19
+      example: 19
+  responses:
+    '200':
+      description: Successfully retrieved unanswered posts
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pid:
+                          type: number
+                          description: Post identifier
+                        tid:
+                          type: number
+                          description: Topic identifier
+                        content:
+                          type: string
+                          description: Post content
+                        answered:
+                          type: boolean
+                          description: Whether this post has been marked as answered
+                        timestamp:
+                          type: number
+                          description: Unix timestamp when post was created
+                        timestampISO:
+                          type: string
+                          description: ISO 8601 formatted timestamp
+                        user:
+                          type: object
+                          properties:
+                            uid:
+                              type: number
+                              description: User identifier
+                            username:
+                              type: string
+                              description: Username
+                            displayname:
+                              type: string
+                              description: Display name
+                  count:
+                    type: integer
+                    description: Total number of unanswered posts
+                  nextStart:
+                    type: integer
+                    description: Starting index for next page
+                  hasMore:
+                    type: boolean
+                    description: Whether there are more posts to retrieve
+    '401':
+      description: Unauthorized
+    '403':
+      description: Forbidden
+    '500':
+      description: Internal Server Error
