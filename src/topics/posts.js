@@ -169,6 +169,21 @@ module.exports = function (Topics) {
 
 	Topics.modifyPostsByPrivilege = function (topicData, topicPrivileges) {
 		const loggedIn = parseInt(topicPrivileges.uid, 10) > 0;
+		
+		// Filter out private posts for non-admins and non-owners
+		topicData.posts = topicData.posts.filter((post) => {
+			if (!post) return false;
+			
+			// If post is public (or public field is undefined/null), show it
+			if (post.public === undefined || post.public === null || post.public === 1) {
+				return true;
+			}
+			
+			// If post is private, only show to admins/mods or post owners
+			const isPostOwner = parseInt(post.uid, 10) === parseInt(topicPrivileges.uid, 10);
+			return topicPrivileges.isAdminOrMod || isPostOwner;
+		});
+		
 		topicData.posts.forEach((post) => {
 			if (post) {
 				post.topicOwnerPost = parseInt(topicData.uid, 10) === parseInt(post.uid, 10);
