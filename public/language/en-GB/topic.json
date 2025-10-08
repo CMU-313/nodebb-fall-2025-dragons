@@ -28,6 +28,8 @@
 	"delete-event-confirm": "Are you sure you want to delete this event?",
 	"purge": "Purge",
 	"restore": "Restore",
+	"pin-post": "Pin Post",
+	"unpin-post": "Unpin Post",
 	"move": "Move",
 	"change-owner": "Change Owner",
 	"manage-editors": "Manage Editors",
@@ -143,6 +145,8 @@
 	"post-delete-confirm": "Are you sure you want to delete this post?",
 	"post-restore-confirm": "Are you sure you want to restore this post?",
 	"post-purge-confirm": "Are you sure you want to purge this post?",
+	"post-pin-confirm": "Are you sure you want to pin this post?",
+	"post-unpin-confirm": "Are you sure you want to unpin this post?",
 
 	"pin-modal-expiry": "Expiration Date",
 	"pin-modal-help": "You can optionally set an expiration date for the pinned topic(s) here. Alternatively, you can leave this field blank to have the topic stay pinned until it is manually unpinned.",

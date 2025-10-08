@@ -35,16 +35,35 @@ module.exports = function (Topics) {
 				repliesStart -= 1;
 			}
 		}
+		
+		// Get pinned posts if we're on the first page
+		let pinnedPids = [];
+		if (start === 0 && topicData.tid) {
+			pinnedPids = await db.getSortedSetRevRange(`tid:${topicData.tid}:pids:pinned`, 0, -1);
+		}
+		
 		let pids = [];
 		if (start !== 0 || stop !== 0) {
 			pids = await posts.getPidsFromSet(set, repliesStart, repliesStop, reverse);
 		}
-		if (!pids.length && !topicData.mainPid) {
+		
+		// Filter out pinned posts from regular posts to avoid duplicates
+		if (pinnedPids.length) {
+			pids = pids.filter(pid => !pinnedPids.includes(String(pid)));
+		}
+		
+		if (!pids.length && !topicData.mainPid && !pinnedPids.length) {
 			return [];
 		}
 
 		if (topicData.mainPid && start === 0) {
 			pids.unshift(topicData.mainPid);
+		}
+		
+		// Insert pinned posts after main post but before other posts
+		if (pinnedPids.length && start === 0) {
+			const mainPostCount = topicData.mainPid ? 1 : 0;
+			pids.splice(mainPostCount, 0, ...pinnedPids);
 		}
 		let postData = await posts.getPostsByPids(pids, uid);
 		if (!postData.length) {
@@ -176,6 +195,7 @@ module.exports = function (Topics) {
 				post.display_delete_tools = topicPrivileges.isAdminOrMod || (post.selfPost && topicPrivileges['posts:delete']);
 				post.display_moderator_tools = post.display_edit_tools || post.display_delete_tools;
 				post.display_move_tools = topicPrivileges.isAdminOrMod && post.index !== 0;
+				post.display_pin_tools = topicPrivileges.isAdmin && post.index !== 0;
 				post.display_post_menu = topicPrivileges.isAdminOrMod ||
 					(post.selfPost && !topicData.locked && !post.deleted) ||
 					(post.selfPost && post.deleted && parseInt(post.deleterUid, 10) === parseInt(topicPrivileges.uid, 10)) ||
