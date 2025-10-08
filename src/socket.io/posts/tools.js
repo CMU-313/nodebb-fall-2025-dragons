@@ -19,7 +19,7 @@ module.exports = function (SocketPosts) {
 		}
 		const cid = await posts.getCidByPid(data.pid);
 		const results = await utils.promiseParallel({
-			posts: posts.getPostFields(data.pid, ['deleted', 'bookmarks', 'uid', 'ip', 'flagId', 'url']),
+			posts: posts.getPostFields(data.pid, ['deleted', 'bookmarks', 'uid', 'ip', 'flagId', 'url', 'answered']),
 			isAdmin: user.isAdministrator(socket.uid),
 			isGlobalMod: user.isGlobalModerator(socket.uid),
 			isModerator: user.isModerator(socket.uid, cid),
@@ -69,6 +69,11 @@ module.exports = function (SocketPosts) {
 			tools: [],
 		});
 		postData.tools = tools;
+		
+		// Debug: log tools to see if any plugins are adding answered menu items
+		if (tools && tools.length > 0) {
+			console.log('[answered] Post tools from plugins:', tools);
+		}
 
 		return results;
 	};

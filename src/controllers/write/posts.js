@@ -220,3 +220,15 @@ Posts.notifyQueuedPostOwner = async (req, res) => {
 	await api.posts.notifyQueuedPostOwner(req, { id, message: req.body.message });
 	helpers.formatApiResponse(200, res);
 };
+
+Posts.markAnswered = async (req, res) => {
+	const { pid } = req.params;
+	const result = await api.posts.markAnswered(req, { pid });
+	helpers.formatApiResponse(200, res, result);
+};
+
+Posts.markUnanswered = async (req, res) => {
+	const { pid } = req.params;
+	const result = await api.posts.markUnanswered(req, { pid });
+	helpers.formatApiResponse(200, res, result);
+};

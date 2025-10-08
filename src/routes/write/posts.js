@@ -34,6 +34,10 @@ module.exports = function () {
 	setupApiRoute(router, 'put', '/:pid/bookmark', middlewares, controllers.write.posts.bookmark);
 	setupApiRoute(router, 'delete', '/:pid/bookmark', middlewares, controllers.write.posts.unbookmark);
 
+	// Answered flag endpoints
+	setupApiRoute(router, 'put', '/:pid/answered', middlewares, controllers.write.posts.markAnswered);
+	setupApiRoute(router, 'delete', '/:pid/answered', middlewares, controllers.write.posts.markUnanswered);
+
 	// Pin/unpin post (admin-only enforced in API)
 	setupApiRoute(router, 'put', '/:pid/pin', [middleware.ensureLoggedIn, middleware.assert.post], controllers.write.posts.pin);
 	setupApiRoute(router, 'delete', '/:pid/pin', [middleware.ensureLoggedIn, middleware.assert.post], controllers.write.posts.unpin);
