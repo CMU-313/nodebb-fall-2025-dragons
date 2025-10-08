@@ -713,5 +713,51 @@ async function sendQueueNotification(type, targetUid, path, notificationText) {
 		notifData.from = meta.config.postQueueNotificationUid;
 	}
 	const notifObj = await notifications.create(notifData);
-	await notifications.push(notifObj, [targetUid]);
+	await notifications.push(notifObj, [targetUid]); 
 }
+
+// Answered posts filtering API endpoints
+postsAPI.getAnswered = async function (caller, data) {
+	const { start = 0, stop = 19 } = data;
+	const postsData = await posts.answered.getAnswered(start, stop, caller.uid);
+	const count = await posts.answered.getAnsweredCount();
+	
+	return {
+		posts: postsData,
+		count: count,
+		nextStart: stop + 1,
+		hasMore: count > stop + 1
+	};
+};
+
+postsAPI.getUnanswered = async function (caller, data) {
+	const { start = 0, stop = 19 } = data;
+	const postsData = await posts.answered.getUnanswered(start, stop, caller.uid);
+	const count = await posts.answered.getUnansweredCount();
+	
+	return {
+		posts: postsData,
+		count: count,
+		nextStart: stop + 1,
+		hasMore: count > stop + 1
+	};
+};
+
+postsAPI.getByAnsweredStatus = async function (caller, data) {
+	const { answered, start = 0, stop = 19 } = data;
+	if (typeof answered !== 'boolean') {
+		throw new Error('[[error:invalid-answered-status]]');
+	}
+	
+	const postsData = await posts.answered.getByStatus(answered, start, stop, caller.uid);
+	const count = answered ? 
+		await posts.answered.getAnsweredCount() : 
+		await posts.answered.getUnansweredCount();
+	
+	return {
+		posts: postsData,
+		count: count,
+		nextStart: stop + 1,
+		hasMore: count > stop + 1
+	};
+};
