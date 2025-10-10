@@ -77,6 +77,13 @@ Topics.getTopicsByTids = async function (tids, options) {
 			.map(t => t && t.cid && t.cid.toString()));
 		const guestTopics = topics.filter(t => t && t.uid === 0);
 
+		// Load answered status for main posts
+		async function loadMainPostAnswered() {
+			const mainPids = topics.map(t => t && t.mainPid).filter(Boolean);
+			const postData = await posts.getPostsFields(mainPids, ['answered']);
+			return postData.map(p => p.answered);
+		}
+
 		async function loadGuestHandles() {
 			const mainPids = guestTopics.map(t => t.mainPid);
 			const postData = await posts.getPostsFields(mainPids, ['handle']);
@@ -94,19 +101,27 @@ Topics.getTopicsByTids = async function (tids, options) {
 			return data;
 		}
 
-		const [teasers, users, userSettings, categoriesData, guestHandles, thumbs] = await Promise.all([
+		const [teasers, users, userSettings, categoriesData, guestHandles, thumbs, mainPostAnswered] = await Promise.all([
 			Topics.getTeasers(topics, options),
 			user.getUsersFields(uids, ['uid', 'username', 'fullname', 'userslug', 'reputation', 'postcount', 'picture', 'signature', 'banned', 'status']),
 			loadShowfullnameSettings(),
 			categories.getCategoriesFields(cids, ['cid', 'name', 'slug', 'icon', 'backgroundImage', 'imageClass', 'bgColor', 'color', 'disabled']),
 			loadGuestHandles(),
 			Topics.thumbs.load(topics),
+			loadMainPostAnswered(),
 		]);
 
 		users.forEach((userObj, idx) => {
 			// Hide fullname if needed
 			if (!userSettings[idx].showfullname) {
 				userObj.fullname = undefined;
+			}
+		});
+
+		// Assign mainPostAnswered to each topic
+		topics.forEach((topic, idx) => {
+			if (topic && mainPostAnswered[idx] !== undefined) {
+				topic.mainPostAnswered = mainPostAnswered[idx];
 			}
 		});
 
