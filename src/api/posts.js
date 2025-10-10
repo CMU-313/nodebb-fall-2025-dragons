@@ -176,7 +176,7 @@ postsAPI.edit = async function (caller, data) {
 postsAPI.markAnswered = async (caller, { pid }) => {
 	if (!caller.uid) throw new Error('[[error:not-logged-in]]');
 	// Insert any privilege checks you added (topic owner / mod / admin)
-	await posts.answered.mark(pid, caller.uid);
+	await posts.setAnswered(pid, true, caller.uid);
 	return { ok: true };
 };
 
