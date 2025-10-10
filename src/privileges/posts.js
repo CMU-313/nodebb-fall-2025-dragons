@@ -196,9 +196,13 @@ privsPosts.canDelete = async function (pid, uid) {
 };
 
 // Who can toggle post.answered?
-// Policy: admin/mod OR topic owner OR post owner
+// Policy: admin/mod OR topic owner OR post owner (ONLY for main posts)
 privsPosts.canMarkAnswered = async function (pid, uid) {
 	if (parseInt(uid, 10) <= 0) return false;
+
+	// Only allow main posts to be marked as answered
+	const isMainPost = await posts.isMain(pid);
+	if (!isMainPost) return false;
 
 	// Fast path: admin/mod in the post's category
 	if (await isAdminOrMod(pid, uid)) return true;

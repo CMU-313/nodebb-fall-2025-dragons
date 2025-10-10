@@ -228,3 +228,26 @@ Posts.notifyQueuedPostOwner = async (req, res) => {
 	await api.posts.notifyQueuedPostOwner(req, { id, message: req.body.message });
 	helpers.formatApiResponse(200, res);
 };
+
+Posts.getAnswered = async (req, res) => {
+	const { start = 0, stop = 19 } = req.query;
+	const data = await api.posts.getAnswered(req, { start: parseInt(start), stop: parseInt(stop) });
+	helpers.formatApiResponse(200, res, data);
+};
+
+Posts.getUnanswered = async (req, res) => {
+	const { start = 0, stop = 19 } = req.query;
+	const data = await api.posts.getUnanswered(req, { start: parseInt(start), stop: parseInt(stop) });
+	helpers.formatApiResponse(200, res, data);
+};
+
+Posts.getByAnsweredStatus = async (req, res) => {
+	const { start = 0, stop = 19, answered } = req.query;
+	const answeredBool = answered === 'true';
+	const data = await api.posts.getByAnsweredStatus(req, { 
+		start: parseInt(start), 
+		stop: parseInt(stop), 
+		answered: answeredBool, 
+	});
+	helpers.formatApiResponse(200, res, data);
+};

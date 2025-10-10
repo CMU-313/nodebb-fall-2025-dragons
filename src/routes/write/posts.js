@@ -10,6 +10,11 @@ const { setupApiRoute } = routeHelpers;
 module.exports = function () {
 	const middlewares = [middleware.ensureLoggedIn, middleware.assert.post];
 
+	// Answered posts filtering routes (must come before /:pid route)
+	setupApiRoute(router, 'get', '/answered', [], controllers.write.posts.getAnswered);
+	setupApiRoute(router, 'get', '/unanswered', [], controllers.write.posts.getUnanswered);
+	setupApiRoute(router, 'get', '/filter/answered', [], controllers.write.posts.getByAnsweredStatus);
+
 	setupApiRoute(router, 'get', '/:pid', [middleware.assert.post], controllers.write.posts.get);
 	// There is no POST route because you POST to a topic to create a new post. Intuitive, no?
 	setupApiRoute(router, 'put', '/:pid', [middleware.ensureLoggedIn, middleware.checkRequired.bind(null, ['content'])], controllers.write.posts.edit);
