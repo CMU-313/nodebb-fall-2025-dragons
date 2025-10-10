@@ -53,14 +53,9 @@ module.exports = function (app, middleware, controllers) {
 		[...middlewares, middleware.ensureLoggedIn, middleware.applyCSRF],
 		async (req, res, next) => {
 			try {
-				console.log('[answered] POST hit pid=%s uid=%s', req.params.pid, req.uid);
-				// If you implemented Posts.setAnswered, you can use it instead:
-				// const out = await posts.setAnswered(req.params.pid, true, req.uid);
 				await posts.answered.mark(req.params.pid, req.uid);
-				console.log('[answered] POST resolved pid=%s', req.params.pid);
 				res.json({ ok: true, pid: Number(req.params.pid), answered: true });
 			} catch (err) {
-				console.error('[answered] POST error', err);
 				next(err);
 			}
 		}
@@ -72,13 +67,9 @@ module.exports = function (app, middleware, controllers) {
 		[...middlewares, middleware.ensureLoggedIn, middleware.applyCSRF],
 		async (req, res, next) => {
 			try {
-				console.log('[answered] DELETE hit pid=%s uid=%s', req.params.pid, req.uid);
-				// const out = await posts.setAnswered(req.params.pid, false, req.uid);
 				await posts.answered.unmark(req.params.pid, req.uid);
-				console.log('[answered] DELETE resolved pid=%s', req.params.pid);
 				res.json({ ok: true, pid: Number(req.params.pid), answered: false });
 			} catch (err) {
-				console.error('[answered] DELETE error', err);
 				next(err);
 			}
 		}

@@ -70,10 +70,6 @@ module.exports = function (SocketPosts) {
 		});
 		postData.tools = tools;
 		
-		// Debug: log tools to see if any plugins are adding answered menu items
-		if (tools && tools.length > 0) {
-			console.log('[answered] Post tools from plugins:', tools);
-		}
 
 		return results;
 	};
