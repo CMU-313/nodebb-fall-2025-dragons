@@ -123,16 +123,18 @@ describe('Posts: answered flag', () => {
 	});
 
 	describe('API functions', () => {
-		let apiTestPid;
+		let apiTestPid, apiTestTid;
 
 		before(async () => {
-			// Create a fresh post for API tests since the original might be purged
-			const reply = await topics.reply({
+			// Create a fresh main post for API tests since only main posts can be marked as answered
+			const freshTopic = await topics.post({
 				uid: ownerUid,
-				tid,
-				content: 'API test reply post',
+				cid,
+				title: 'API test topic',
+				content: 'API test main post',
 			});
-			apiTestPid = reply.pid;
+			apiTestPid = freshTopic.postData.pid;
+			apiTestTid = freshTopic.topicData.tid;
 		});
 
 		it('postsAPI.markAnswered should mark post as answered', async () => {
@@ -152,7 +154,7 @@ describe('Posts: answered flag', () => {
 
 			const [globalHas, topicHas] = await Promise.all([
 				db.isSortedSetMember('posts:answered', apiTestPid),
-				db.isSortedSetMember(`tid:${tid}:answered`, apiTestPid),
+				db.isSortedSetMember(`tid:${apiTestTid}:answered`, apiTestPid),
 			]);
 			assert.strictEqual(globalHas, true);
 			assert.strictEqual(topicHas, true);
@@ -188,13 +190,14 @@ describe('Posts: answered flag', () => {
 		let controllerTestPid;
 
 		before(async () => {
-			// Create a fresh post for controller tests
-			const reply = await topics.reply({
+			// Create a fresh main post for controller tests since only main posts can be marked as answered
+			const freshTopic = await topics.post({
 				uid: ownerUid,
-				tid,
-				content: 'Controller test reply post',
+				cid,
+				title: 'Controller test topic',
+				content: 'Controller test main post',
 			});
-			controllerTestPid = reply.pid;
+			controllerTestPid = freshTopic.postData.pid;
 		});
 
 		it('Posts.markAnswered controller should work', async () => {
@@ -229,13 +232,14 @@ describe('Posts: answered flag', () => {
 		let ownerJar;
 
 		before(async () => {
-			// Create a fresh post for route tests
-			const reply = await topics.reply({
+			// Create a fresh main post for route tests since only main posts can be marked as answered
+			const freshTopic = await topics.post({
 				uid: ownerUid,
-				tid,
-				content: 'Route test reply post',
+				cid,
+				title: 'Route test topic',
+				content: 'Route test main post',
 			});
-			routeTestPid = reply.pid;
+			routeTestPid = freshTopic.postData.pid;
 
 			// Login the owner user to get a proper session
 			const loginResult = await helpers.loginUser('owner', '123456');
