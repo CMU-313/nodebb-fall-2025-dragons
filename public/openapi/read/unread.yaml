@@ -191,6 +191,9 @@ get:
                               type: array
                               items:
                                 type: string
+                            mainPostAnswered:
+                              type: number
+                              description: Whether the main post of this topic is marked as answered (1) or not (0)
                             index:
                               type: number
                   topicCount:
