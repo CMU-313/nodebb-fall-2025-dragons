@@ -75,12 +75,8 @@ define('forum/topic/postTools', [
 				if (postIndex > 0) {
 					// Remove answered functionality from reply posts
 					const answeredMenuItem = dropdownMenu.find('[component="post/mark-answered"]');
-					const unansweredMenuItem = dropdownMenu.find('[component="post/mark-unanswered"]');
 					if (answeredMenuItem.length > 0) {
 						answeredMenuItem.parent().remove();
-					}
-					if (unansweredMenuItem.length > 0) {
-						unansweredMenuItem.parent().remove();
 					}
 					// Also remove the divider if it's now empty
 					const divider = dropdownMenu.find('.dropdown-divider');
@@ -91,19 +87,16 @@ define('forum/topic/postTools', [
 					// For main posts, set the correct menu state based on answered status
 					const badge = postEl.find('[component="post/answered-badge"]');
 					const answeredMenuItem = dropdownMenu.find('[component="post/mark-answered"]');
-					const unansweredMenuItem = dropdownMenu.find('[component="post/mark-unanswered"]');
 					
 					// Check if post is answered (badge is visible)
 					const isAnswered = !badge.hasClass('hidden') && badge.is(':visible');
 					
 					if (isAnswered) {
-						// Post is answered - show "Mark as Unanswered", hide "Mark as Answered"
+						// Post is answered - hide "Mark as Answered" button
 						answeredMenuItem.parent().hide();
-						unansweredMenuItem.parent().show();
 					} else {
-						// Post is not answered - show "Mark as Answered", hide "Mark as Unanswered"
+						// Post is not answered - show "Mark as Answered" button
 						answeredMenuItem.parent().show();
-						unansweredMenuItem.parent().hide();
 					}
 				}
 			});
@@ -331,9 +324,6 @@ define('forum/topic/postTools', [
 			markPostAnswered($(this));
 		});
 
-		postContainer.on('click', '[component="post/mark-unanswered"]', function () {
-			markPostUnanswered($(this));
-		});
 
 		// Initialize answered functionality - hide on reply posts (index > 0) and set correct menu state
 		setTimeout(function () {
@@ -345,7 +335,6 @@ define('forum/topic/postTools', [
 				if (index > 0) {
 					const badge = postEl.find('[component="post/answered-badge"]');
 					const answeredMenuItem = postEl.find('[component="post/mark-answered"]');
-					const unansweredMenuItem = postEl.find('[component="post/mark-unanswered"]');
 				
 					// Remove badge
 					badge.remove();
@@ -353,9 +342,6 @@ define('forum/topic/postTools', [
 					// Remove menu items
 					if (answeredMenuItem.length > 0) {
 						answeredMenuItem.parent().remove();
-					}
-					if (unansweredMenuItem.length > 0) {
-						unansweredMenuItem.parent().remove();
 					}
 					
 					// Remove divider if it's now empty
@@ -367,19 +353,16 @@ define('forum/topic/postTools', [
 					// For main posts (index 0), set the correct menu state based on answered status
 					const badge = postEl.find('[component="post/answered-badge"]');
 					const answeredMenuItem = postEl.find('[component="post/mark-answered"]');
-					const unansweredMenuItem = postEl.find('[component="post/mark-unanswered"]');
 					
 					// Check if post is answered (badge is visible)
 					const isAnswered = !badge.hasClass('hidden') && badge.is(':visible');
 					
 					if (isAnswered) {
-						// Post is answered - show "Mark as Unanswered", hide "Mark as Answered"
+						// Post is answered - hide "Mark as Answered" button
 						answeredMenuItem.parent().hide();
-						unansweredMenuItem.parent().show();
 					} else {
-						// Post is not answered - show "Mark as Answered", hide "Mark as Unanswered"
+						// Post is not answered - show "Mark as Answered" button
 						answeredMenuItem.parent().show();
-						unansweredMenuItem.parent().hide();
 					}
 				}
 			});
@@ -685,34 +668,11 @@ define('forum/topic/postTools', [
 			
 			// Update menu items
 			postEl.find('[component="post/mark-answered"]').parent().hide();
-			postEl.find('[component="post/mark-unanswered"]').parent().show();
 			
 			alerts.success('Post marked as answered');
 		});
 	}
 
-	function markPostUnanswered(button) {
-		const pid = getData(button, 'data-pid');
-		const postEl = components.get('post', 'pid', pid);
-		
-		api.del(`/posts/${encodeURIComponent(pid)}/answered`, function (err) {
-			if (err) {
-				return alerts.error(err);
-			}
-			
-			// Hide answered badge - simple approach
-			const badge = postEl.find('[component="post/answered-badge"]');
-			badge.addClass('hidden');
-			badge.hide();
-			badge.css('display', 'none');
-			
-			// Update menu items
-			postEl.find('[component="post/mark-answered"]').parent().show();
-			postEl.find('[component="post/mark-unanswered"]').parent().hide();
-			
-			alerts.success('Post marked as unanswered');
-		});
-	}
 
 	return PostTools;
 });

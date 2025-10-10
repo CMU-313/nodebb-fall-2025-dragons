@@ -180,11 +180,6 @@ postsAPI.markAnswered = async (caller, { pid }) => {
 	return { ok: true };
 };
 
-postsAPI.unmarkAnswered = async (caller, { pid }) => {
-	if (!caller.uid) throw new Error('[[error:not-logged-in]]');
-	await posts.answered.unmark(pid, caller.uid);
-	return { ok: true };
-};
 
 postsAPI.delete = async function (caller, data) {
 	await deleteOrRestore(caller, data, {
