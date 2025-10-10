@@ -198,6 +198,8 @@ paths:
     $ref: 'write/posts/pid/bookmark.yaml'
   /posts/{pid}/answered:
     $ref: 'write/posts/pid/answered.yaml'
+  /posts/{pid}/public:
+    $ref: 'write/posts/pid/public.yaml'
   /posts/{pid}/diffs:
     $ref: 'write/posts/pid/diffs.yaml'
   /posts/{pid}/diffs/{since}:

@@ -42,6 +42,9 @@ PostObject:
     answered: 
       type: boolean 
       description: Whether this post has been marked as the accepted answer
+    public:
+      type: number
+      description: Whether the post is public (1) or private (0)
     timestampISO:
       type: string
       description: An ISO 8601 formatted date string (complementing `timestamp`)
@@ -196,6 +199,8 @@ PostDataObject:
         announces:
           type: number
         bookmarks:
+          type: number
+        public:
           type: number
         deleterUid:
           type: number

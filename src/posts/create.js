@@ -28,7 +28,10 @@ module.exports = function (Posts) {
 		}
 
 		const pid = data.pid || await db.incrObjectField('global', 'nextPid');
-		let postData = { pid, uid, tid, content, sourceContent, timestamp, answered: 0};
+		let postData = { 
+			pid, uid, tid, content, sourceContent, timestamp, answered: 0, 
+			public: data.public !== undefined ? data.public : 1,
+		};
 
 		if (data.toPid) {
 			postData.toPid = data.toPid;

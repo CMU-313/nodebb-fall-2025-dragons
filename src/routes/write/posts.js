@@ -41,6 +41,8 @@ module.exports = function () {
 	setupApiRoute(router, 'put', '/:pid/pin', [middleware.ensureLoggedIn, middleware.assert.post], controllers.write.posts.pin);
 	setupApiRoute(router, 'delete', '/:pid/pin', [middleware.ensureLoggedIn, middleware.assert.post], controllers.write.posts.unpin);
 
+	setupApiRoute(router, 'put', '/:pid/public', [...middlewares, middleware.checkRequired.bind(null, ['public'])], controllers.write.posts.setPublic);
+
 	setupApiRoute(router, 'get', '/:pid/diffs', [middleware.assert.post], controllers.write.posts.getDiffs);
 	setupApiRoute(router, 'get', '/:pid/diffs/:since', [middleware.assert.post], controllers.write.posts.loadDiff);
 	setupApiRoute(router, 'put', '/:pid/diffs/:since', middlewares, controllers.write.posts.restoreDiff);

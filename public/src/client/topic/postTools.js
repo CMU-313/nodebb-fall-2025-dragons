@@ -159,6 +159,7 @@ define('forum/topic/postTools', [
 			return bookmarkPost($(this), getData($(this), 'data-pid'));
 		});
 
+
 		postContainer.on('click', '[component="post/upvote"]', function () {
 			return votes.toggleVote($(this), '.upvoted', 1);
 		});
@@ -462,6 +463,7 @@ define('forum/topic/postTools', [
 		});
 		return false;
 	}
+
 
 	function getData(button, data) {
 		return button.parents('[data-pid]').attr(data);

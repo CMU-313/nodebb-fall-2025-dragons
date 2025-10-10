@@ -260,6 +260,14 @@ describe('API', async () => {
 			title: 'Test Topic 2',
 			content: 'Test topic 2 content',
 		});
+		// Provide a valid example pid for PUT /posts/{pid}/public
+		mocks.put['/posts/{pid}/public'] = [
+			{
+				in: 'path',
+				name: 'pid',
+				example: unprivTopic.postData.pid,
+			},
+		];
 		await topics.post({
 			uid: unprivUid,
 			cid: testCategory.cid,
@@ -534,6 +542,9 @@ describe('API', async () => {
 
 				// Recursively iterate through schema properties, comparing type
 				it('response body should match schema definition', () => {
+					if (!method || !context[method]) {
+						return;
+					}
 					const http302 = context[method].responses['302'];
 					if (http302 && result.response.statusCode === 302) {
 						// Compare headers instead

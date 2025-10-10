@@ -78,6 +78,11 @@
 			</div>
 			<div class="d-flex align-items-center gap-1 justify-content-end">
 				<span class="bookmarked opacity-0 text-primary"><i class="fa fa-bookmark-o"></i></span>
+				{{{ if !posts.public }}}
+				<span class="privacy-indicator text-muted" title="[[topic:private-post]]">
+					<i class="fa fa-lock"></i>
+				</span>
+				{{{ end }}}
 				<a href="{config.relative_path}/post/{encodeURIComponent(./pid)}" class="post-index text-muted d-none d-md-inline">#{increment(./index, "1")}</a>
 			</div>
 		</div>
