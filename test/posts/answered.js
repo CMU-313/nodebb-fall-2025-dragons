@@ -29,6 +29,7 @@ describe('Posts: answered flag', () => {
 		});
 
 		tid = created.topicData.tid;
+		mainPid = created.postData.pid; // Store the main post ID
 
 		const reply = await topics.reply({
 			uid: ownerUid,
@@ -38,71 +39,83 @@ describe('Posts: answered flag', () => {
 		replyPid = reply.pid;
 	});
 
-	it('topic owner can mark a reply answered', async () => {
-		const ok = await privileges.posts.canMarkAnswered(replyPid, ownerUid);
+	it('topic owner can mark main post answered', async () => {
+		const ok = await privileges.posts.canMarkAnswered(mainPid, ownerUid);
 		assert.strictEqual(ok, true);
 
-		const res = await posts.setAnswered(replyPid, true, ownerUid);
+		const res = await posts.setAnswered(mainPid, true, ownerUid);
 		assert.strictEqual(res.answered, 1);
 
-		const answeredField = await posts.getPostField(replyPid, 'answered');
+		const answeredField = await posts.getPostField(mainPid, 'answered');
 		assert.strictEqual(Number(answeredField), 1);
 
 		const [globalHas, topicHas] = await Promise.all([
-			db.isSortedSetMember('posts:answered', replyPid),
-			db.isSortedSetMember(`tid:${tid}:answered`, replyPid),
+			db.isSortedSetMember('posts:answered', mainPid),
+			db.isSortedSetMember(`tid:${tid}:answered`, mainPid),
 		]);
 		assert.strictEqual(globalHas, true);
 		assert.strictEqual(topicHas, true);
 	});
 
 	it('random user cannot mark answered', async () => {
-		const ok = await privileges.posts.canMarkAnswered(replyPid, otherUid);
+		const ok = await privileges.posts.canMarkAnswered(mainPid, otherUid);
 		assert.strictEqual(ok, false);
+	});
+
+	it('replies cannot be marked as answered', async () => {
+		const ok = await privileges.posts.canMarkAnswered(replyPid, ownerUid);
+		assert.strictEqual(ok, false);
+
+		try {
+			await posts.setAnswered(replyPid, true, ownerUid);
+			assert.fail('Should have thrown an error');
+		} catch (err) {
+			assert.strictEqual(err.message, '[[error:only-main-posts-can-be-answered]]');
+		}
 	});
 
 	it('delete removes from indices; restore re-adds if still answered', async () => {
 		// delete
-		await posts.delete(replyPid, ownerUid);
+		await posts.delete(mainPid, ownerUid);
 		const [gDel, tDel] = await Promise.all([
-			db.isSortedSetMember('posts:answered', replyPid),
-			db.isSortedSetMember(`tid:${tid}:answered`, replyPid),
+			db.isSortedSetMember('posts:answered', mainPid),
+			db.isSortedSetMember(`tid:${tid}:answered`, mainPid),
 		]);
 		assert.strictEqual(gDel, false);
 		assert.strictEqual(tDel, false);
 
 		// restore
-		await posts.restore(replyPid, ownerUid);
+		await posts.restore(mainPid, ownerUid);
 
 		const [gBack, tBack] = await Promise.all([
-			db.isSortedSetMember('posts:answered', replyPid),
-			db.isSortedSetMember(`tid:${tid}:answered`, replyPid),
+			db.isSortedSetMember('posts:answered', mainPid),
+			db.isSortedSetMember(`tid:${tid}:answered`, mainPid),
 		]);
 		assert.strictEqual(gBack, true);
 		assert.strictEqual(tBack, true);
 	});
 
 	it('unmark answered removes from indices', async () => {
-		await posts.setAnswered(replyPid, false, ownerUid);
+		await posts.setAnswered(mainPid, false, ownerUid);
 		const [gHas, tHas] = await Promise.all([
-			db.isSortedSetMember('posts:answered', replyPid),
-			db.isSortedSetMember(`tid:${tid}:answered`, replyPid),
+			db.isSortedSetMember('posts:answered', mainPid),
+			db.isSortedSetMember(`tid:${tid}:answered`, mainPid),
 		]);
 		assert.strictEqual(gHas, false);
 		assert.strictEqual(tHas, false);
-		const fieldNow = await posts.getPostField(replyPid, 'answered');
+		const fieldNow = await posts.getPostField(mainPid, 'answered');
 		assert.strictEqual(Number(fieldNow), 0);
 	});
 
 	it('purge removes from indices as well', async () => {
 		// mark again, then purge
-		await posts.setAnswered(replyPid, true, ownerUid);
-		await posts.purge(replyPid, ownerUid);
+		await posts.setAnswered(mainPid, true, ownerUid);
+		await posts.purge(mainPid, ownerUid);
 
 		const [gHas, tHas, exists] = await Promise.all([
-			db.isSortedSetMember('posts:answered', replyPid),
-			db.isSortedSetMember(`tid:${tid}:answered`, replyPid),
-			posts.exists(replyPid),
+			db.isSortedSetMember('posts:answered', mainPid),
+			db.isSortedSetMember(`tid:${tid}:answered`, mainPid),
+			posts.exists(mainPid),
 		]);
 		assert.strictEqual(gHas, false);
 		assert.strictEqual(tHas, false);

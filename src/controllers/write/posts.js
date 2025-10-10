@@ -234,3 +234,25 @@ Posts.markAnswered = async (req, res) => {
 	const result = await api.posts.markAnswered(req, { pid });
 	helpers.formatApiResponse(200, res, result);
 };
+Posts.getAnswered = async (req, res) => {
+	const { start = 0, stop = 19 } = req.query;
+	const data = await api.posts.getAnswered(req, { start: parseInt(start), stop: parseInt(stop) });
+	helpers.formatApiResponse(200, res, data);
+};
+
+Posts.getUnanswered = async (req, res) => {
+	const { start = 0, stop = 19 } = req.query;
+	const data = await api.posts.getUnanswered(req, { start: parseInt(start), stop: parseInt(stop) });
+	helpers.formatApiResponse(200, res, data);
+};
+
+Posts.getByAnsweredStatus = async (req, res) => {
+	const { start = 0, stop = 19, answered } = req.query;
+	const answeredBool = answered === 'true';
+	const data = await api.posts.getByAnsweredStatus(req, { 
+		start: parseInt(start), 
+		stop: parseInt(stop), 
+		answered: answeredBool, 
+	});
+	helpers.formatApiResponse(200, res, data);
+};
