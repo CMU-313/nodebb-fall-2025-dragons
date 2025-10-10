@@ -1,0 +1,60 @@
+put:
+  tags:
+    - posts
+  summary: mark a post as answered
+  description: This operation marks a post as answered.
+  parameters:
+    - in: path
+      name: pid
+      schema:
+        type: string
+      required: true
+      description: a valid post id
+      example: 2
+  responses:
+    '200':
+      description: Post successfully marked as answered
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Indicates if the operation was successful
+                    example: true
+delete:
+  tags:
+    - posts
+  summary: mark a post as unanswered
+  description: This operation marks a post as unanswered.
+  parameters:
+    - in: path
+      name: pid
+      schema:
+        type: string
+      required: true
+      description: a valid post id
+      example: 2
+  responses:
+    '200':
+      description: Post successfully marked as unanswered
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Indicates if the operation was successful
+                    example: true

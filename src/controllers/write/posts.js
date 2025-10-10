@@ -229,6 +229,6 @@ Posts.markAnswered = async (req, res) => {
 
 Posts.markUnanswered = async (req, res) => {
 	const { pid } = req.params;
-	const result = await api.posts.markUnanswered(req, { pid });
+	const result = await api.posts.unmarkAnswered(req, { pid });
 	helpers.formatApiResponse(200, res, result);
 };
