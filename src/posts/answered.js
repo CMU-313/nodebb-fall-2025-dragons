@@ -25,7 +25,6 @@ module.exports = function (Posts) {
 			await db.sortedSetRemove('posts:answered', pid);
 			await db.sortedSetRemove(`tid:${tid}:answered`, pid);
 		}
-		console.log('[answered] set done pid=%s', pid);
 	};
 
 	Posts.answered.mark = async (pid /*, uid */) => {
@@ -34,7 +33,6 @@ module.exports = function (Posts) {
 	};
 
 	Posts.answered.unmark = async (pid /*, uid */) => {
-		console.log('[answered] unmark pid=%s', pid);
 		await Posts.answered.set(pid, false);
 	};
 

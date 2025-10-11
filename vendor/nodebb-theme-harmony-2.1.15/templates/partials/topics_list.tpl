@@ -48,6 +48,9 @@
 						<i class="fa fa-arrow-circle-right"></i>
 						<span>[[topic:moved]]</span>
 					</span>
+					<span component="topic/answered" class="badge bg-success text-white fw-bold px-2 py-1 {{{ if !./mainPostAnswered }}}hidden{{{ end }}}">
+						ANSWERED
+					</span>
 					{{{each ./icons}}}<span class="lh-1">{@value}</span>{{{end}}}
 
 					{{{ if !template.category }}}

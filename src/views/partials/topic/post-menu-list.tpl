@@ -61,6 +61,12 @@
 </li>
 {{{ end }}}
 
+<li class="dropdown-divider"></li>
+<li>
+	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/mark-answered" role="menuitem" href="#">
+		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-check-circle"></i></span> Mark as Answered
+	</a>
+</li>
 
 {{{ if posts.ip }}}
 <li>

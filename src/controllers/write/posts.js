@@ -229,6 +229,11 @@ Posts.notifyQueuedPostOwner = async (req, res) => {
 	helpers.formatApiResponse(200, res);
 };
 
+Posts.markAnswered = async (req, res) => {
+	const { pid } = req.params;
+	const result = await api.posts.markAnswered(req, { pid });
+	helpers.formatApiResponse(200, res, result);
+};
 Posts.getAnswered = async (req, res) => {
 	const { start = 0, stop = 19 } = req.query;
 	const data = await api.posts.getAnswered(req, { start: parseInt(start), stop: parseInt(stop) });

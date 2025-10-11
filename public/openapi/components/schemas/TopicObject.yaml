@@ -173,6 +173,9 @@ TopicObject:
           items:
             type: string
             description: HTML injected into the theme
+        mainPostAnswered:
+          type: number
+          description: Whether the main post of this topic is marked as answered (1) or not (0)
     - type: object
       description: Optional properties that may or may not be present (except for `tid`, which is always present, and is only here as a hack to pass validation)
       properties:

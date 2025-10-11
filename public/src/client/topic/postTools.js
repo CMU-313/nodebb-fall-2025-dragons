@@ -69,6 +69,36 @@ define('forum/topic/postTools', [
 				hooks.fire('action:post.tools.load', {
 					element: dropdownMenu,
 				});
+				
+				// Handle answered functionality based on post type
+				const postIndex = parseInt(postEl.attr('data-index'), 10);
+				if (postIndex > 0) {
+					// Remove answered functionality from reply posts
+					const answeredMenuItem = dropdownMenu.find('[component="post/mark-answered"]');
+					if (answeredMenuItem.length > 0) {
+						answeredMenuItem.parent().remove();
+					}
+					// Also remove the divider if it's now empty
+					const divider = dropdownMenu.find('.dropdown-divider');
+					if (divider.length > 0 && divider.next().length === 0) {
+						divider.remove();
+					}
+				} else {
+					// For main posts, set the correct menu state based on answered status
+					const badge = postEl.find('[component="post/answered-badge"]');
+					const answeredMenuItem = dropdownMenu.find('[component="post/mark-answered"]');
+					
+					// Check if post is answered (badge is visible)
+					const isAnswered = !badge.hasClass('hidden') && badge.is(':visible');
+					
+					if (isAnswered) {
+						// Post is answered - hide "Mark as Answered" button
+						answeredMenuItem.parent().hide();
+					} else {
+						// Post is not answered - show "Mark as Answered" button
+						answeredMenuItem.parent().show();
+					}
+				}
 			});
 		});
 	}
@@ -298,6 +328,54 @@ define('forum/topic/postTools', [
 		postContainer.on('click', '[component="post/chat"]', function () {
 			openChat($(this));
 		});
+
+		postContainer.on('click', '[component="post/mark-answered"]', function () {
+			markPostAnswered($(this));
+		});
+
+
+		// Initialize answered functionality - hide on reply posts (index > 0) and set correct menu state
+		setTimeout(function () {
+			postContainer.find('[component="post"]').each(function () {
+				const postEl = $(this);
+				const index = parseInt(postEl.attr('data-index'), 10);
+			
+				// Hide answered functionality on reply posts (index > 0)
+				if (index > 0) {
+					const badge = postEl.find('[component="post/answered-badge"]');
+					const answeredMenuItem = postEl.find('[component="post/mark-answered"]');
+				
+					// Remove badge
+					badge.remove();
+					
+					// Remove menu items
+					if (answeredMenuItem.length > 0) {
+						answeredMenuItem.parent().remove();
+					}
+					
+					// Remove divider if it's now empty
+					const divider = postEl.find('.dropdown-divider');
+					if (divider.length > 0 && divider.next().length === 0) {
+						divider.remove();
+					}
+				} else {
+					// For main posts (index 0), set the correct menu state based on answered status
+					const badge = postEl.find('[component="post/answered-badge"]');
+					const answeredMenuItem = postEl.find('[component="post/mark-answered"]');
+					
+					// Check if post is answered (badge is visible)
+					const isAnswered = !badge.hasClass('hidden') && badge.is(':visible');
+					
+					if (isAnswered) {
+						// Post is answered - hide "Mark as Answered" button
+						answeredMenuItem.parent().hide();
+					} else {
+						// Post is not answered - show "Mark as Answered" button
+						answeredMenuItem.parent().show();
+					}
+				}
+			});
+		}, 100);
 	}
 
 	async function onReplyClicked(button, tid) {
@@ -602,6 +680,29 @@ define('forum/topic/postTools', [
 			});
 		}
 	}
+
+	function markPostAnswered(button) {
+		const pid = getData(button, 'data-pid');
+		const postEl = components.get('post', 'pid', pid);
+		
+		api.put(`/posts/${encodeURIComponent(pid)}/answered`, {}, function (err) {
+			if (err) {
+				return alerts.error(err);
+			}
+			
+			// Show answered badge
+			const badge = postEl.find('[component="post/answered-badge"]');
+			badge.removeClass('hidden');
+			badge.show();
+			badge.css('display', '');
+			
+			// Update menu items
+			postEl.find('[component="post/mark-answered"]').parent().hide();
+			
+			alerts.success('Post marked as answered');
+		});
+	}
+
 
 	return PostTools;
 });
