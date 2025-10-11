@@ -256,6 +256,14 @@ define('forum/topic/postTools', [
 			purgePost($(this));
 		});
 
+		postContainer.on('click', '[component="post/pin"]', function () {
+			pinPost($(this));
+		});
+
+		postContainer.on('click', '[component="post/unpin"]', function () {
+			unpinPost($(this));
+		});
+
 		postContainer.on('click', '[component="post/move"]', function () {
 			const btn = $(this);
 			require(['forum/topic/move-post'], function (movePost) {
@@ -447,6 +455,26 @@ define('forum/topic/postTools', [
 			const route = action === 'purge' ? '' : '/state';
 			const method = action === 'restore' ? 'put' : 'del';
 			api[method](`/posts/${encodeURIComponent(pid)}${route}`).catch(alerts.error);
+		});
+	}
+
+	function pinPost(button) {
+		const pid = getData(button, 'data-pid');
+		bootbox.confirm('[[topic:post-pin-confirm]]', function (confirm) {
+			if (!confirm) {
+				return;
+			}
+			api.put(`/posts/${encodeURIComponent(pid)}/pin`, {}).catch(alerts.error);
+		});
+	}
+
+	function unpinPost(button) {
+		const pid = getData(button, 'data-pid');
+		bootbox.confirm('[[topic:post-unpin-confirm]]', function (confirm) {
+			if (!confirm) {
+				return;
+			}
+			api.del(`/posts/${encodeURIComponent(pid)}/pin`, {}).catch(alerts.error);
 		});
 	}
 

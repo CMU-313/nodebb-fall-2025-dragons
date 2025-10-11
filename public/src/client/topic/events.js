@@ -37,6 +37,9 @@ define('forum/topic/events', [
 		'event:post_deleted': togglePostDeleteState,
 		'event:post_restored': togglePostDeleteState,
 
+		'event:post_pinned': onPostPinned,
+		'event:post_unpinned': onPostUnpinned,
+
 		'posts.bookmark': togglePostBookmark,
 		'posts.unbookmark': togglePostBookmark,
 
@@ -226,6 +229,54 @@ define('forum/topic/events', [
 				}
 			});
 		}
+	}
+
+	function onPostPinned(data) {
+		if (!data || !data.pid || String(data.tid) !== String(ajaxify.data.tid)) {
+			return;
+		}
+		const postEl = components.get('post', 'pid', data.pid);
+		if (!postEl.length) {
+			return;
+		}
+
+		// Show pinned indicator
+		const pinnedBadge = postEl.find('[component="post/pinned"]');
+		if (pinnedBadge.length) {
+			pinnedBadge.removeClass('hidden');
+		}
+
+		// Update menu items
+		postTools.removeMenu(postEl);
+		postEl.find('[component="post/pin"]').addClass('hidden').parent().attr('hidden', '');
+		postEl.find('[component="post/unpin"]').removeClass('hidden').parent().attr('hidden', null);
+
+		// Reload page to show proper post order
+		ajaxify.refresh();
+	}
+
+	function onPostUnpinned(data) {
+		if (!data || !data.pid || String(data.tid) !== String(ajaxify.data.tid)) {
+			return;
+		}
+		const postEl = components.get('post', 'pid', data.pid);
+		if (!postEl.length) {
+			return;
+		}
+
+		// Hide pinned indicator
+		const pinnedBadge = postEl.find('[component="post/pinned"]');
+		if (pinnedBadge.length) {
+			pinnedBadge.addClass('hidden');
+		}
+
+		// Update menu items
+		postTools.removeMenu(postEl);
+		postEl.find('[component="post/pin"]').removeClass('hidden').parent().attr('hidden', null);
+		postEl.find('[component="post/unpin"]').addClass('hidden').parent().attr('hidden', '');
+
+		// Reload page to show proper post order
+		ajaxify.refresh();
 	}
 
 	function togglePostBookmark(data) {
