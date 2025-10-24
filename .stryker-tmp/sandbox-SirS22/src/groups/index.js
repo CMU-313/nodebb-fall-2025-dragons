@@ -209,7 +209,7 @@ Groups.getOwnersAndMembers = async function (groupName, uid, start, stop) {
 		await addMembers(memberStart, -1);
 	} else {
 		while (returnUsers.length < countToReturn && !done) {
-			/* eslint-disable no-await-in-loop */
+			 
 			await addMembers(memberStart, memberStop);
 			memberStart = memberStop + 1;
 			memberStop = memberStart + countToReturn - 1;

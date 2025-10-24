@@ -116,7 +116,7 @@ async function addPlugin(translations, pluginData, lang, namespace) {
 	]);
 
 	for (const language of langs) {
-		/* eslint-disable no-await-in-loop */
+		 
 		await assignFileToTranslations(translations, path.join(pathToPluginLanguageFolder, language, `${namespace}.json`));
 	}
 }

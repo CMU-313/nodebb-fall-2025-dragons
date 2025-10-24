@@ -359,7 +359,7 @@ usersAPI.revokeSession = async (caller, { uid, uuid }) => {
 	const sids = await db.getSortedSetRange(`uid:${uid}:sessions`, 0, -1);
 	let _id;
 	for (const sid of sids) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const sessionObj = await db.sessionStoreGet(sid);
 		if (sessionObj && sessionObj.meta && sessionObj.meta.uuid === uuid) {
 			_id = sid;
@@ -405,7 +405,7 @@ usersAPI.invite = async (caller, { emails, groupsToJoin, uid }) => {
 	const emailsArr = emails.split(',').map(email => email.trim()).filter(Boolean);
 
 	for (const email of emailsArr) {
-		/* eslint-disable no-await-in-loop */
+		 
 		let invites = 0;
 		if (max) {
 			invites = await user.getInvitesNumber(caller.uid);

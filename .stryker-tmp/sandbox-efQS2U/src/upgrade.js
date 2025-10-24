@@ -127,7 +127,7 @@ Upgrade.process = async function (files, skipCount) {
 	]);
 
 	for (const file of files) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const scriptExport = require(file);
 		const date = new Date(scriptExport.timestamp);
 		const version = path.dirname(file).split('/').pop();

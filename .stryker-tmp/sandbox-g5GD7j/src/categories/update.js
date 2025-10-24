@@ -37,7 +37,7 @@ module.exports = function (Categories) {
 		}
 
 		for (const key of fields) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await updateCategoryField(cid, key, category[key]);
 		}
 

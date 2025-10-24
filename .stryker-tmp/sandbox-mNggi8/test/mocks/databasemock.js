@@ -222,7 +222,7 @@ async function setupMockDefaults() {
 		'test/uploads/profile',
 	];
 	for (const folder of folders) {
-		/* eslint-disable no-await-in-loop */
+		 
 		await mkdirp(folder);
 	}
 }

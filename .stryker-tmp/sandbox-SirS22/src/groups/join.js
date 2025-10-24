@@ -77,7 +77,7 @@ module.exports = function (Groups) {
 
 		for (const groupName of groupsToCreate) {
 			try {
-				// eslint-disable-next-line no-await-in-loop
+				 
 				await Groups.create({
 					name: groupName,
 					hidden: 1,

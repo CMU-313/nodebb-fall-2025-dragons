@@ -594,7 +594,7 @@ module.exports = function (module) {
 		}
 		let iteration = 1;
 		while (!done) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const item = await cursor.next();
 			if (item === null) {
 				done = true;

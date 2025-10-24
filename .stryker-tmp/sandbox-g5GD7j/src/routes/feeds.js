@@ -290,7 +290,7 @@ async function generateTopicsFeed(feedOptions, feedTopics, timestampField) {
 	}
 
 	for (const topicData of feedTopics) {
-		/* eslint-disable no-await-in-loop */
+		 
 		await addFeedItem(topicData);
 	}
 	return feed;

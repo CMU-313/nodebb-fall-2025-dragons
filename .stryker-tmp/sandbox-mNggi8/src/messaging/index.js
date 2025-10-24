@@ -318,7 +318,7 @@ Messaging.getLatestUndeletedMessage = async (uid, roomId) => {
 	let mids;
 
 	while (!done) {
-		/* eslint-disable no-await-in-loop */
+		 
 		mids = await getMessageIds(roomId, uid, index, index);
 		if (mids.length) {
 			const states = await Messaging.getMessageFields(mids[0], ['deleted', 'system']);
@@ -450,7 +450,7 @@ Messaging.hasPrivateChat = async (uid, withUid) => {
 	let index = 0;
 	let roomId = 0;
 	while (index < roomIds.length && !roomId) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const count = await Messaging.getUserCountInRoom(roomIds[index]);
 		if (count === 2) {
 			roomId = roomIds[index];

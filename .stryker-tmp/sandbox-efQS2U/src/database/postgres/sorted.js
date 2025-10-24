@@ -740,7 +740,7 @@ SELECT z."value", z."score"
 		}
 		let iteration = 1;
 		while (true) {
-			/* eslint-disable no-await-in-loop */
+			 
 			let rows = await cursor.readAsync(batchSize);
 			if (!rows.length) {
 				client.release();

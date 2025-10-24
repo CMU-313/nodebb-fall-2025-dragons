@@ -342,7 +342,7 @@ NUMERIC)-- WsPn&query[cid]=-1&parentCid=0&selectedCids[]=-1&privilege=topics:rea
 			this.timeout(100000);
 			const keys = [];
 			for (let i = 0; i < 400; i++) {
-				/* eslint-disable no-await-in-loop */
+				 
 				const bulkAdd = [];
 				keys.push(`testzset${i}`);
 				for (let k = 0; k < 100; k++) {

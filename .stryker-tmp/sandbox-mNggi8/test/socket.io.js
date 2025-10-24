@@ -550,7 +550,7 @@ describe('socket.io', () => {
 		const tpls = ['digest', 'banned', 'verify', 'welcome', 'notification', 'invitation'];
 		try {
 			for (const tpl of tpls) {
-				// eslint-disable-next-line no-await-in-loop
+				 
 				await socketAdmin.email.test({ uid: adminUid }, { template: tpl });
 			}
 		} catch (err) {

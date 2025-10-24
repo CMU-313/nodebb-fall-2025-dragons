@@ -70,7 +70,7 @@ module.exports = function (Topics) {
 		await Topics.updateTopicBookmarks(fromTid, pids);
 
 		for (const pid of pids) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const canEdit = await privileges.posts.canEdit(pid, uid);
 			if (!canEdit.flag) {
 				throw new Error(canEdit.message);

@@ -126,7 +126,7 @@ module.exports = function (Categories) {
 				return;
 			}
 			// clear all the way to root
-			// eslint-disable-next-line no-await-in-loop
+			 
 			parentCid = await Categories.getCategoryField(parentCid, 'parentCid');
 		}
 	}
@@ -164,7 +164,7 @@ module.exports = function (Categories) {
 		let suffix;
 		while (taken) {
 			suffix = utils.generateUUID().slice(0, 8);
-			// eslint-disable-next-line no-await-in-loop
+			 
 			taken = await meta.slugTaken(`${slug}-${suffix}`);
 		}
 

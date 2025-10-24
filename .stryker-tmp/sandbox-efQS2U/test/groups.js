@@ -527,7 +527,7 @@ describe('Groups', () => {
 			const invalidNames = ['test:test', 'another/test', '---'];
 			for (const name of invalidNames) {
 				try {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					await apiGroups.update({ uid: adminUid }, { slug: slug, name: name });
 					assert(false);
 				} catch (err) {
@@ -718,7 +718,7 @@ describe('Groups', () => {
 			}
 			const groups = ['Global Moderators', 'verified-users', 'unverified-users'];
 			for (const g of groups) {
-				// eslint-disable-next-line no-await-in-loop
+				 
 				await test(g);
 			}
 			meta.config.allowPrivateGroups = oldValue;
@@ -1058,7 +1058,7 @@ describe('Groups', () => {
 			];
 			for (const slug of specialGroups) {
 				try {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					await apiGroups.delete({ uid: adminUid }, { slug: slug });
 					assert(false);
 				} catch (err) {

@@ -15,6 +15,6 @@ Instances.getCount = async () => db.sortedSetCard('instances:lastSeen');
 Instances.isAllowed = async (domain) => {
 	let { activitypubFilter: type, activitypubFilterList: list } = meta.config;
 	list = new Set(String(list).split('\n'));
-	// eslint-disable-next-line no-bitwise
+	 
 	return list.has(domain) ^ !type;
 };

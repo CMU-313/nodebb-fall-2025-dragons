@@ -48,7 +48,7 @@ exports.processSortedSet = async function (setKey, process, options) {
 	let iteration = 1;
 	const getFn = db[`${method}${byScore}${withScores}`];
 	while (true) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const ids = await getFn(
 			setKey,
 			start,

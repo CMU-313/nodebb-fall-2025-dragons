@@ -185,7 +185,7 @@ Data.getScripts = async function getScripts(pluginData, target) {
 	const scripts = [];
 
 	for (const filePath of input) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const modulePath = await resolveModulePath(pluginData.path, filePath);
 		if (modulePath) {
 			scripts.push(modulePath);

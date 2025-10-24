@@ -12,7 +12,7 @@ module.exports = {
 
 		const cids = await db.getSortedSetRevRange('categories:cid', 0, -1);
 		for (const cid of cids) {
-			/* eslint-disable no-await-in-loop */
+			 
 			await privileges.categories.give(privilegeToGive, cid, ['administrators', 'Global Moderators']);
 		}
 	},

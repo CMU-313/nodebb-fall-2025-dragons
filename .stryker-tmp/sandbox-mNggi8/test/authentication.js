@@ -361,7 +361,7 @@ describe('authentication', () => {
 			{ username: 'a', password: 'somepassword' },
 		];
 		for (const user of userData) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			const { response, body } = await helpers.registerUser(user);
 			assert.equal(response.statusCode, 400);
 			assert.equal(body, '[[error:username-too-short]]');

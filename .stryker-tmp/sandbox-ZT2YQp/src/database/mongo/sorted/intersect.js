@@ -17,7 +17,7 @@ module.exports = function (module) {
 
 		const otherSets = keys.filter(s => s !== counts.smallestSet);
 		for (let i = 0; i < otherSets.length; i++) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const query = { _key: otherSets[i], value: { $in: items.map(i => i.value) } };
 			if (i === otherSets.length - 1) {
 				return await objects.countDocuments(query);
@@ -97,7 +97,7 @@ module.exports = function (module) {
 		// move sortSet to the end of array
 		otherSets.push(otherSets.splice(otherSets.indexOf(sortSet), 1)[0]);
 		for (let i = 0; i < otherSets.length; i++) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const cursor = objects.find({ _key: otherSets[i], value: { $in: items.map(i => i.value) } });
 			cursor.batchSize(items.length + 1);
 			// at the last step sort by sortSet
@@ -130,7 +130,7 @@ module.exports = function (module) {
 		let inters = [];
 		let done = false;
 		while (!done) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const items = [];
 			while (items.length < batchSize) {
 				const nextItem = await cursor.next();

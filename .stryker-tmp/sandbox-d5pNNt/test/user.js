@@ -183,7 +183,7 @@ describe('User', () => {
 				});
 			}
 			for (const user of users) {
-				// eslint-disable-next-line no-await-in-loop
+				 
 				await User.create(user);
 			}
 
@@ -1077,7 +1077,7 @@ describe('User', () => {
 				do {
 					const chunk = goodImage.slice(socketData.progress, socketData.progress + chunkSize);
 					socketData.progress += chunk.length;
-					// eslint-disable-next-line
+					 
 					result = await socketUploads.upload({ uid: uid }, {
 						chunk: chunk,
 						params: socketData,

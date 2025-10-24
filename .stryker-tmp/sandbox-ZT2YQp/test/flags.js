@@ -1127,7 +1127,7 @@ describe('Flags', () => {
 					delete opts.jar;
 					delete opts.headers;
 
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { response } = await request[opts.method](opts.uri, opts);
 					const { statusCode } = response;
 					assert(statusCode.toString().startsWith(4), `${opts.method.toUpperCase()} ${opts.uri} => ${statusCode}`);
@@ -1136,7 +1136,7 @@ describe('Flags', () => {
 
 			it('should not allow access to privileged flag endpoints to regular users', async () => {
 				for (const opts of requests) {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { response } = await request[opts.method](opts.uri, opts);
 					const { statusCode } = response;
 					assert(statusCode.toString().startsWith(4), `${opts.method.toUpperCase()} ${opts.uri} => ${statusCode}`);
@@ -1147,7 +1147,7 @@ describe('Flags', () => {
 				await Groups.join('administrators', uid);
 
 				for (const opts of requests) {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { response } = await request[opts.method](opts.uri, opts);
 					const { statusCode } = response;
 					assert.strictEqual(statusCode, 200, `${opts.method.toUpperCase()} ${opts.uri} => ${statusCode}`);
@@ -1158,7 +1158,7 @@ describe('Flags', () => {
 				await Groups.join('Global Moderators', uid);
 
 				for (const opts of requests) {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { response } = await request[opts.method](opts.uri, opts);
 					const { statusCode } = response;
 					assert.strictEqual(statusCode, 200, `${opts.method.toUpperCase()} ${opts.uri} => ${statusCode}`);
@@ -1169,7 +1169,7 @@ describe('Flags', () => {
 				await Privileges.categories.give(['moderate'], 1, [uid]);
 
 				for (const opts of requests) {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { response } = await request[opts.method](opts.uri, opts);
 					const { statusCode } = response;
 					assert.strictEqual(statusCode, 200, `${opts.method.toUpperCase()} ${opts.uri} => ${statusCode}`);
@@ -1184,7 +1184,7 @@ describe('Flags', () => {
 				await Privileges.categories.give(['moderate'], cid, [uid]);
 
 				for (const opts of requests) {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { response } = await request[opts.method](opts.uri, opts);
 					const { statusCode } = response;
 					assert(statusCode.toString().startsWith(4), `${opts.method.toUpperCase()} ${opts.uri} => ${statusCode}`);

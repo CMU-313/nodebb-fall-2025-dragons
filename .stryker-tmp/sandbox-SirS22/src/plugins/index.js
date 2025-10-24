@@ -109,7 +109,7 @@ Plugins.reload = async function () {
 
 	const paths = await Plugins.getPluginPaths();
 	for (const path of paths) {
-		/* eslint-disable no-await-in-loop */
+		 
 		await Plugins.loadPlugin(path);
 	}
 

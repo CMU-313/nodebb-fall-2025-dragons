@@ -196,7 +196,7 @@ describe('API', async () => {
 		mocks.get['/api/confirm/{code}'][0].example = await db.get(`confirm:byUid:${emailConfirmationUid}`);
 
 		for (let x = 0; x < 4; x++) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await user.create({ username: 'deleteme', password: '123456' }); // for testing of DELETE /users (uids 5, 6) and DELETE /user/:uid/account (uid 7)
 		}
 		await groups.join('administrators', adminUid);

@@ -88,7 +88,7 @@ describe('Upload Controllers', () => {
 			require('../src/middleware/uploads').clearCache();
 			const times = meta.config.uploadRateLimitThreshold + 1;
 			for (let i = 0; i < times; i++) {
-				// eslint-disable-next-line no-await-in-loop
+				 
 				const { response, body } = await helpers.uploadFile(`${nconf.get('url')}/api/post/upload`, path.join(__dirname, '../test/files/503.html'), {}, jar, csrf_token);
 				if (i + 1 >= times) {
 					assert.strictEqual(response.statusCode, 500);

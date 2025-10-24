@@ -485,7 +485,7 @@ async function createCategories() {
 		await fs.promises.readFile(path.join(__dirname, '../', 'install/data/categories.json'), 'utf8')
 	);
 	for (const categoryData of default_categories) {
-		// eslint-disable-next-line no-await-in-loop
+		 
 		await Categories.create(categoryData);
 	}
 }

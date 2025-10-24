@@ -138,7 +138,7 @@ module.exports = function (Groups) {
 		winston.verbose(`[groups.update] Group is now public, automatically adding ${pendingUids.length} new members, who were pending prior.`);
 
 		for (const uid of pendingUids) {
-			/* eslint-disable no-await-in-loop */
+			 
 			await Groups.join(groupName, uid);
 		}
 		await db.delete(`group:${groupName}:pending`);

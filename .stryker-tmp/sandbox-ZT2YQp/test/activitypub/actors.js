@@ -114,9 +114,9 @@ describe.skip('Actor asserton', () => {
 				// Two shares
 				for (let x = 0; x < 2; x++) {
 					const { id: pid } = helpers.mocks.note();
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { tid } = await activitypub.notes.assert(0, pid, { skipChecks: 1 });
-					// eslint-disable-next-line no-await-in-loop
+					 
 					await db.sortedSetAdd(`uid:${id}:shares`, Date.now(), tid);
 				}
 
@@ -137,13 +137,13 @@ describe.skip('Actor asserton', () => {
 				// Two shares, one moved to local cid
 				for (let x = 0; x < 2; x++) {
 					const { id: pid } = helpers.mocks.note();
-					// eslint-disable-next-line no-await-in-loop
+					 
 					const { tid } = await activitypub.notes.assert(0, pid, { skipChecks: 1 });
-					// eslint-disable-next-line no-await-in-loop
+					 
 					await db.sortedSetAdd(`uid:${id}:shares`, Date.now(), tid);
 
 					if (!x) {
-						// eslint-disable-next-line no-await-in-loop
+						 
 						await topics.tools.move(tid, {
 							cid,
 							uid: 'system',

@@ -192,7 +192,7 @@ helpers.buildCategoryBreadcrumbs = async function (cid) {
 	const breadcrumbs = [];
 
 	while (parseInt(cid, 10)) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const data = await categories.getCategoryFields(cid, ['name', 'slug', 'parentCid', 'disabled', 'isSection']);
 		if (!data.disabled && !data.isSection) {
 			breadcrumbs.unshift({

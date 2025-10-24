@@ -254,7 +254,7 @@ module.exports = function (Topics) {
 			return hasUnblockedUnread;
 		}
 		while (!done) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const pidsSinceLastVisit = await db.getSortedSetRangeByScore(`tid:${tid}:posts`, start, count, userLastReadTimestamp, '+inf');
 			if (!pidsSinceLastVisit.length) {
 				return hasUnblockedUnread;

@@ -451,7 +451,7 @@ describe('Topic\'s', () => {
 				const result = await topics.post({ uid: topic.userId, title: 'page test', content: 'main post', cid: topic.categoryId });
 				tid = result.topicData.tid;
 				for (let i = 0; i < 30; i++) {
-					// eslint-disable-next-line no-await-in-loop
+					 
 					await topics.reply({ uid: adminUid, content: `topic reply ${i + 1}`, tid: tid });
 				}
 			});
@@ -974,7 +974,7 @@ describe('Topic\'s', () => {
 				cid: topic.categoryId,
 			}));
 			for (let i = 0; i < 12; i++) {
-				// eslint-disable-next-line no-await-in-loop
+				 
 				await postReply();
 			}
 			topicPids = replies.map(reply => reply.pid);

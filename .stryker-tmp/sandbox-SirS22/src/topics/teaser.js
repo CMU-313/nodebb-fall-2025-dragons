@@ -125,7 +125,7 @@ module.exports = function (Topics) {
 		}
 
 		do {
-			/* eslint-disable no-await-in-loop */
+			 
 			let pids = await db.getSortedSetRevRange(`tid:${postData.tid}:posts`, start, stop);
 			if (!pids.length) {
 				checkedAllReplies = true;

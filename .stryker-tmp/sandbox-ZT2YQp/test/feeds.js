@@ -50,7 +50,7 @@ describe('feeds', () => {
 			`${nconf.get('url')}/tags/nodebb.rss`,
 		];
 		for (const url of feedUrls) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			const { response } = await request.get(url);
 			assert.equal(response.statusCode, 404);
 		}

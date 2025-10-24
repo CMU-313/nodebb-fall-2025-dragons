@@ -31,7 +31,7 @@ module.exports = {
 						}
 					}
 				});
-				// eslint-disable-next-line no-await-in-loop
+				 
 				await widgets.setArea(area);
 			}
 		}

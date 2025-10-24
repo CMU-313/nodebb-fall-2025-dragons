@@ -50,7 +50,7 @@ module.exports = function (Categories) {
 		let topicData;
 		let index = 0;
 		do {
-			/* eslint-disable no-await-in-loop */
+			 
 			const pids = await db.getSortedSetRevRange(`cid:${cid}:pids`, index, index);
 			if (!pids.length) {
 				return;

@@ -318,7 +318,7 @@ module.exports = function (module) {
 		let done = false;
 		const seen = Object.create(null);
 		do {
-			/* eslint-disable no-await-in-loop */
+			 
 			const res = await module.client.zscan(params.key, cursor, 'MATCH', params.match, 'COUNT', 5000);
 			cursor = res[0];
 			done = cursor === '0';

@@ -174,7 +174,7 @@ async function fireFilterHook(hook, hookList, params) {
 	}
 
 	for (const hookObj of hookList) {
-		// eslint-disable-next-line
+		 
 		params = await fireMethod(hookObj, params);
 	}
 	return params;
@@ -191,7 +191,7 @@ async function fireActionHook(hook, hookList, params) {
 			}
 		} else {
 			try {
-				// eslint-disable-next-line
+				 
 				await hookObj.method(params);
 			} catch (err) {
 				winston.error(`[plugins] Error in hook ${hookObj.id}@${hookObj.hook} \n${err.stack}`);
@@ -235,7 +235,7 @@ async function fireStaticHook(hook, hookList, params) {
 
 	for (const hookObj of hookList) {
 		try {
-			// eslint-disable-next-line
+			 
 			await fireMethod(hookObj, params);
 		} catch (err) {
 			if (err && err.message === 'timeout') {
@@ -265,7 +265,7 @@ async function fireResponseHook(hook, hookList, params) {
 			if (params.res.headersSent) {
 				return;
 			}
-			// eslint-disable-next-line
+			 
 			await hookObj.method(params);
 		}
 	}

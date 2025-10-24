@@ -52,7 +52,7 @@ async function runSteps(tasks, options) {
 			const step = steps[tasks[i]];
 			if (step && step.message && step.handler) {
 				process.stdout.write(`\n${chalk.bold(`${i + 1}. `)}${chalk.yellow(step.message)}`);
-				/* eslint-disable-next-line */
+				 
 				await step.handler(options);
 			}
 		}

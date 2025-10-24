@@ -35,7 +35,7 @@ uploadsController.upload = async function (req, res, filesIterator) {
 	try {
 		const images = [];
 		for (const fileObj of files) {
-			/* eslint-disable no-await-in-loop */
+			 
 			images.push(await filesIterator(fileObj));
 		}
 

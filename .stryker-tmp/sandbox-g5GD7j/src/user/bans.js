@@ -73,7 +73,7 @@ module.exports = function (User) {
 		await db.setObject(uids.map(uid => `user:${uid}`), { banned: 0, 'banned:expire': 0 });
 		const now = Date.now();
 		const unbanDataArray = [];
-		/* eslint-disable no-await-in-loop */
+		 
 		for (const user of userData) {
 			const systemGroupsToJoin = [
 				'registered-users',

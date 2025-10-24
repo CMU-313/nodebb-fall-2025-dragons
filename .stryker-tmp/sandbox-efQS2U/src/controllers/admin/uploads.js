@@ -76,7 +76,7 @@ async function checkSymLinks(folder) {
 	let dir = path.normalize(folder || '');
 	while (dir.length && dir !== '.') {
 		const nextPath = path.join(nconf.get('upload_path'), dir);
-		// eslint-disable-next-line no-await-in-loop
+		 
 		const stat = await fs.promises.lstat(nextPath);
 		if (stat.isSymbolicLink()) {
 			throw new Error('[[invalid-path]]');
@@ -187,7 +187,7 @@ uploadsController.uploadTouchIcon = async function (req, res, next) {
 		const imageObj = await file.saveFileToLocal('touchicon-orig.png', 'system', uploadedFile.path);
 		// Resize the image into squares for use as touch icons at various DPIs
 		for (const size of sizes) {
-			/* eslint-disable no-await-in-loop */
+			 
 			await image.resizeImage({
 				path: uploadedFile.path,
 				target: path.join(nconf.get('upload_path'), 'system', `touchicon-${size}.png`),

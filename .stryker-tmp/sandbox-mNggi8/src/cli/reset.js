@@ -78,7 +78,7 @@ exports.reset = async function (options) {
 	try {
 		await db.init();
 		for (const task of tasks) {
-			/* eslint-disable no-await-in-loop */
+			 
 			await task();
 		}
 		winston.info('[reset] Reset complete. Please run `./nodebb build` to rebuild assets.');

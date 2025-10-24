@@ -299,7 +299,7 @@ module.exports = function (Topics) {
 		let isDeleted = false;
 		let index = 0;
 		do {
-			/* eslint-disable no-await-in-loop */
+			 
 			const pids = await db.getSortedSetRevRange(`tid:${tid}:posts`, index, index);
 			if (!pids.length) {
 				return null;

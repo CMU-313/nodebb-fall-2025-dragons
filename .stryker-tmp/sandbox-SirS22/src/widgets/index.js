@@ -216,7 +216,7 @@ widgets.saveLocationsOnThemeReset = async function () {
 	const locations = {};
 	const available = await widgets.getAvailableAreas();
 	for (const area of available) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const widgetsAtLocation = await widgets.getArea(area.template, area.location);
 		if (widgetsAtLocation.length) {
 			locations[area.template] = locations[area.template] || [];
@@ -279,7 +279,7 @@ widgets.reset = async function () {
 
 	let saveDrafts = drafts || [];
 	for (const area of areas) {
-		/* eslint-disable no-await-in-loop */
+		 
 		const areaData = await widgets.getArea(area.template, area.location);
 		saveDrafts = saveDrafts.concat(areaData);
 		area.widgets = [];
@@ -306,7 +306,7 @@ widgets.resetTemplate = async function (template) {
 
 widgets.resetTemplates = async function (templates) {
 	for (const template of templates) {
-		/* eslint-disable no-await-in-loop */
+		 
 		await widgets.resetTemplate(template);
 	}
 };

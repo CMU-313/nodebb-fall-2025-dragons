@@ -25,7 +25,7 @@ module.exports = function (Topics) {
 			.filter(tid => tid && String(tid) !== String(mergeIntoTid));
 
 		for (const tid of otherTids) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const pids = await Topics.getPids(tid);
 			for (const pid of pids) {
 				await Topics.movePostToTopic(uid, pid, mergeIntoTid);

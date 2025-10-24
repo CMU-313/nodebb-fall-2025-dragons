@@ -92,7 +92,7 @@ async function updatePrivilges() {
 			await privileges.global.rescind(['groups:chat'], 'registered-users');
 		}
 		for (const cid of cids) {
-			/* eslint-disable no-await-in-loop */
+			 
 			const data = await privileges.categories.list(cid);
 
 			const registeredUsersPrivs = data.groups.find(d => d.name === 'registered-users').privileges;

@@ -102,7 +102,7 @@ async function buildTargets(targets, parallel, options) {
 		]);
 	} else {
 		for (const target of targets) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			await step(target, parallel, `${_.padStart(target, length)} `);
 		}
 		if (options.webpack || options.watch) {

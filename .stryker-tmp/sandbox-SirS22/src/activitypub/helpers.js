@@ -514,7 +514,7 @@ Helpers.generateDigest = (set) => {
 		.reduce((memo, cur) => {
 			const a = Buffer.from(memo, 'hex');
 			const b = Buffer.from(cur, 'hex');
-			// eslint-disable-next-line no-bitwise
+			 
 			const result = a.map((x, i) => x ^ b[i]);
 			return result.toString('hex');
 		});

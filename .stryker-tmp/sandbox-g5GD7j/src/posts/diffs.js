@@ -115,7 +115,7 @@ module.exports = function (Posts) {
 			content = versionContents[timestamps[i]];
 		}
 
-		/* eslint-disable no-await-in-loop */
+		 
 		for (let i = lastTimestampIndex; i >= timestampIndex; --i) {
 			// Recreate older diffs with skipping the deleted diff
 			const newContentIndex = i === timestampIndex ? i - 2 : i - 1;

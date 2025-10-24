@@ -796,7 +796,7 @@ Flags.update = async function (flagId, uid, changeset) {
 		} else if (prop === 'assignee') {
 			if (changeset[prop] === '') {
 				tasks.push(db.sortedSetRemove(`flags:byAssignee:${changeset[prop]}`, flagId));
-			/* eslint-disable-next-line */
+			 
 			} else if (!await isAssignable(parseInt(changeset[prop], 10))) {
 				delete changeset[prop];
 			} else {
@@ -830,7 +830,7 @@ Flags.resolveUserPostFlags = async function (uid, callerUid) {
 			let postData = await posts.getPostsFields(pids, ['pid', 'flagId']);
 			postData = postData.filter(p => p && p.flagId && parseInt(p.flagId, 10));
 			for (const postObj of postData) {
-				// eslint-disable-next-line no-await-in-loop
+				 
 				await Flags.update(postObj.flagId, callerUid, { state: 'resolved' });
 			}
 		}, {
