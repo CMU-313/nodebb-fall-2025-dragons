@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker-js/master/packages/core/schema/stryker-schema.json",
+  "testRunner": "mocha",
+  "reporters": ["progress", "clear-text", "html"],
+  "coverageAnalysis": "perTest",
+
+  "mutate": ["src/promisify.js"],
+
+  "ignorePatterns": [
+    "build/**",
+    "public/**",
+    "node_modules/**",
+    ".stryker-tmp/**",
+    "coverage/**",
+    "logs/**",
+    "uploads/**",
+    "**/*.min.js"
+  ],
+
+  "plugins": ["@stryker-mutator/mocha-runner"],
+
+  "testRunnerNodeArgs": ["--require", "./test/stryker-setup.js"]
+}
