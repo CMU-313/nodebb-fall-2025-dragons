@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker-js/master/packages/core/schema/stryker-schema.json",
+  "testRunner": "command",
+  "commandRunner": { "command": "npm run -s test:stryker" },
+  "reporters": ["progress", "clear-text", "html"],
+  "coverageAnalysis": "off",
+
+  "mutate": ["src/promisify.js"],
+
+  "ignorePatterns": [
+    "build/**",
+    "public/**",
+    "node_modules/**",
+    ".stryker-tmp/**",
+    "coverage/**",
+    "logs/**",
+    "uploads/**",
+    "**/*.min.js",
+    "test/mocks/**",
+    "test/fixtures/**"
+  ]
+}
