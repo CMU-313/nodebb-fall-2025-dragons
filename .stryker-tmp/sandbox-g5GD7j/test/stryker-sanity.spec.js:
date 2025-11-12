@@ -1,0 +1,28 @@
+// Minimal unit test that does NOT pull NodeBB's heavy test helpers.
+const assert = require('assert');
+const promisify = require('../src/promisify.js');
+
+describe('promisify (sanity)', function () {
+  it('wraps a node-style callback function', async function () {
+    function nodeCb(x, cb) {
+      setTimeout(() => cb(null, x * 2), 0);
+    }
+    const p = promisify(nodeCb);
+    const result = await p(21);
+    assert.strictEqual(result, 42);
+  });
+
+  it('propagates errors via rejection', async function () {
+    function nodeCbErr(cb) {
+      setTimeout(() => cb(new Error('nope')), 0);
+    }
+    const p = promisify(nodeCbErr);
+    try {
+      await p();
+      assert.fail('Expected rejection');
+    } catch (err) {
+      assert.ok(err instanceof Error);
+      assert.strictEqual(err.message, 'nope');
+    }
+  });
+});
