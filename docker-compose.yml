@@ -10,6 +10,11 @@ services:
       - nodebb-uploads:/usr/src/app/public/uploads
       - nodebb-config:/opt/config
       - ./install/docker/setup.json:/usr/src/app/setup.json
+      - ollama_data:/opt/ollama
+    environment:
+      - OLLAMA_HOST=http://127.0.0.1:11434
+      - OLLAMA_MODEL=deepseek-r1:1.5b
+      - OLLAMA_MODELS=/opt/ollama
 
   mongo:
     image: 'mongo:7-jammy'
@@ -87,3 +92,5 @@ volumes:
       o: bind
       type: none
       device: ./.docker/config
+  ollama_data:
+    driver: local
