@@ -79,5 +79,16 @@ function modifyPost(post, fields) {
 		if (!fields.length || fields.includes('attachments')) {
 			post.attachments = (post.attachments || '').split(',').filter(Boolean);
 		}
+		// Mark post as "English" if decided by translator service or if it has no info
+		// Handles both string ('true'/'false') and boolean values, defaults to true if undefined
+		if (post.hasOwnProperty('isEnglish') && post.isEnglish !== undefined) {
+			post.isEnglish = post.isEnglish == 'true' || post.isEnglish === true;
+		} else {
+			post.isEnglish = true; // Default to English if field doesn't exist or is undefined (backward compatibility)
+		}
+		// If translatedContent is undefined, default to empty string (no translation needed for English posts)
+		if (post.translatedContent === undefined) {
+			post.translatedContent = '';
+		}
 	}
 }

@@ -43,15 +43,25 @@ ENV NODE_ENV=production \
     SILENT=false \
     USER=nodebb \
     UID=1001 \
-    GID=1001
+    GID=1001 \
+    OLLAMA_HOST=http://127.0.0.1:11434 \
+    OLLAMA_MODEL=deepseek-r1:1.5b \
+    OLLAMA_MODELS=/opt/ollama
 
 WORKDIR /usr/src/app/
 
 RUN corepack enable \
     && groupadd --gid ${GID} ${USER} \
     && useradd --uid ${UID} --gid ${GID} --home-dir /usr/src/app/ --shell /bin/bash ${USER} \
-    && mkdir -p /usr/src/app/logs/ /opt/config/ \
-    && chown -R ${USER}:${USER} /usr/src/app/ /opt/config/
+    && mkdir -p /usr/src/app/logs/ /opt/config/ /opt/ollama \
+    && chown -R ${USER}:${USER} /usr/src/app/ /opt/config/ /opt/ollama
+
+# Install curl and Ollama (for local LLM inference)
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
+        curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://ollama.com/install.sh | sh
 
 COPY --from=build --chown=${USER}:${USER} /usr/src/app/ /usr/src/app/install/docker/setup.json /usr/src/app/
 COPY --from=build --chown=${USER}:${USER} /usr/bin/tini /usr/src/app/install/docker/entrypoint.sh /usr/local/bin/
@@ -65,8 +75,9 @@ RUN chmod +x /usr/local/bin/entrypoint.sh \
 USER ${USER}
 
 EXPOSE 4567
+EXPOSE 11434
 
-VOLUME ["/usr/src/app/node_modules", "/usr/src/app/build", "/usr/src/app/public/uploads", "/opt/config/"]
+VOLUME ["/usr/src/app/node_modules", "/usr/src/app/build", "/usr/src/app/public/uploads", "/opt/config/", "/opt/ollama"]
 
 # Utilising tini as our init system within the Docker container for graceful start-up and termination.
 # Tini serves as an uncomplicated init system, adept at managing the reaping of zombie processes and forwarding signals.

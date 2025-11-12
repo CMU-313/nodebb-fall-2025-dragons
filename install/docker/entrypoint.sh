@@ -12,6 +12,9 @@ set_defaults() {
   export SETUP="${SETUP:-}"
   export PACKAGE_MANAGER="${PACKAGE_MANAGER:-npm}"
   export OVERRIDE_UPDATE_LOCK="${OVERRIDE_UPDATE_LOCK:-false}"
+  export OLLAMA_HOST="${OLLAMA_HOST:-http://127.0.0.1:11434}"
+  export OLLAMA_MODEL="${OLLAMA_MODEL:-deepseek-r1:1.5b}"
+  export OLLAMA_MODELS="${OLLAMA_MODELS:-/opt/ollama}"
 }
 
 # Function to check if a directory exists and is writable
@@ -172,6 +175,39 @@ debug_log() {
   echo "DEBUG: $message"
 }
 
+# Start Ollama in background
+start_ollama() {
+  if pgrep -x "ollama" >/dev/null 2>&1; then
+    echo "Ollama already running"
+    return
+  fi
+  echo "Starting Ollama..."
+  # Ensure models path exists and is writable
+  mkdir -p "$OLLAMA_MODELS" || true
+  ollama serve > /usr/src/app/logs/ollama.log 2>&1 &
+}
+
+# Wait until Ollama is ready to accept requests
+wait_for_ollama() {
+  echo "Waiting for Ollama at $OLLAMA_HOST ..."
+  for i in $(seq 1 60); do
+    if curl -fsS "$OLLAMA_HOST/api/tags" >/dev/null 2>&1; then
+      echo "Ollama is ready"
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Warning: Ollama did not become ready in time"
+}
+
+# Ensure the desired model exists; pull if missing
+ensure_ollama_model() {
+  echo "Ensuring model '$OLLAMA_MODEL' is available..."
+  if ! ollama list 2>/dev/null | grep -q "$OLLAMA_MODEL"; then
+    ollama pull "$OLLAMA_MODEL" || true
+  fi
+}
+
 # Main function
 main() {
   set_defaults
@@ -182,6 +218,11 @@ main() {
   debug_log "PACKAGE_MANAGER: $PACKAGE_MANAGER"
   debug_log "CONFIG location: $CONFIG"
   debug_log "START_BUILD: $START_BUILD"
+
+  # Start Ollama and get model ready (non-fatal if it fails)
+  start_ollama
+  wait_for_ollama
+  ensure_ollama_model
 
   if [ -n "$SETUP" ]; then
     start_setup_session "$CONFIG"

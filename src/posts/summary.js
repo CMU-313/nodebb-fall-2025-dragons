@@ -25,7 +25,7 @@ module.exports = function (Posts) {
 		const fields = [
 			'pid', 'tid', 'toPid', 'url', 'content', 'sourceContent', 
 			'uid', 'timestamp', 'deleted', 'upvotes', 'downvotes', 
-			'replies', 'handle', 'answered', 'public',
+			'replies', 'handle', 'answered', 'public', 'isEnglish', 'translatedContent',
 		].concat(options.extraFields);
 
 		let posts = await Posts.getPostsFields(pids, fields);

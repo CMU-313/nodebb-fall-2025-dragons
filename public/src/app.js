@@ -28,11 +28,18 @@ app.currentRoom = null;
 app.widgets = {};
 app.flags = {};
 app.onDomReady = function () {
+	console.log('[dbg] app.onDomReady: DOM ready state =', document.readyState);
 	$(document).ready(async function () {
+		console.log('[dbg] app.onDomReady: jQuery ready fired');
 		if (app.user.timeagoCode && app.user.timeagoCode !== 'en') {
 			await import(/* webpackChunkName: "timeago/[request]" */ 'timeago/locales/jquery.timeago.' + app.user.timeagoCode);
 		}
-		app.load();
+		try {
+			app.load();
+			console.log('[dbg] app.onDomReady: app.load invoked');
+		} catch (e) {
+			console.error('[dbg] app.onDomReady: error invoking app.load', e);
+		}
 	});
 };
 
@@ -49,6 +56,7 @@ if (document.readyState === 'loading') {
 	app.cacheBuster = config['cache-buster'];
 
 	app.coldLoad = function () {
+		console.log('[dbg] app.coldLoad: called');
 		if (appLoaded) {
 			ajaxify.coldLoad();
 		} else {
@@ -57,6 +65,7 @@ if (document.readyState === 'loading') {
 	};
 
 	app.handleEarlyClicks = function () {
+		console.log('[dbg] app.handleEarlyClicks: init');
 		/**
 		 * Occasionally, a button or anchor (not meant to be ajaxified) is clicked before
 		 * ajaxify is ready. Capture that event and re-click it once NodeBB is ready.
@@ -81,6 +90,7 @@ if (document.readyState === 'loading') {
 			require(['hooks'], function (hooks) {
 				hooks.on('action:ajaxify.end', function () {
 					document.body.removeEventListener('click', earlyClick);
+					console.log('[dbg] app.handleEarlyClicks: re-click queued elements', earlyQueue.length);
 					earlyQueue.forEach(function (el) {
 						el.click();
 					});
@@ -94,6 +104,7 @@ if (document.readyState === 'loading') {
 	app.handleEarlyClicks();
 
 	app.load = function () {
+		console.log('[dbg] app.load: start');
 		$('body').on('click', '#new_topic', function (e) {
 			e.preventDefault();
 			app.newTopic();
@@ -110,6 +121,7 @@ if (document.readyState === 'loading') {
 			'forum/header',
 			'hooks',
 		], function (taskbar, helpers, pagination, messages, search, header, hooks) {
+			console.log('[dbg] app.load: core modules loaded');
 			header.prepareDOM();
 			taskbar.init();
 			helpers.register();
@@ -117,6 +129,7 @@ if (document.readyState === 'loading') {
 			search.init();
 			overrides.overrideTimeago();
 			hooks.fire('action:app.load');
+			console.log('[dbg] app.load: fired action:app.load');
 			messages.show();
 			appLoaded = true;
 		});
