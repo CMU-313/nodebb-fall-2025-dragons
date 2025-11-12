@@ -18,6 +18,7 @@ services:
       - OLLAMA_HOST=http://127.0.0.1:11434
       - OLLAMA_MODEL=deepseek-r1:1.5b
       - OLLAMA_MODELS=/opt/ollama
+      - START_BUILD=true
 
   redis:
     image: redis:8.0.1-alpine
