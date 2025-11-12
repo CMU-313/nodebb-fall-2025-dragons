@@ -58,8 +58,13 @@ module.exports = function (Posts) {
 			return postData;
 		}
 
-		({ postData } = await plugins.hooks.fire('filter:parse.post', { postData, type }));
-		postData.content = translator.escape(postData.content);
+	({ postData } = await plugins.hooks.fire('filter:parse.post', { postData, type }));
+	postData.content = translator.escape(postData.content);
+	if (postData.translatedContent) {
+		postData.translatedContent = translator.escape(
+			Posts.sanitize(String(postData.translatedContent))
+		);
+	}
 		if (postData.pid) {
 			cache.set(cacheKey, postData.content);
 		}

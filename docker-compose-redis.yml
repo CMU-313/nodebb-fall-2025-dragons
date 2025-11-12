@@ -16,7 +16,7 @@ services:
       - ollama_data:/opt/ollama
     environment:
       - OLLAMA_HOST=http://127.0.0.1:11434
-      - OLLAMA_MODEL=deepseek-r1:1.5b
+      - OLLAMA_MODEL=qwen2.5:0.5b
       - OLLAMA_MODELS=/opt/ollama
       - START_BUILD=true
 

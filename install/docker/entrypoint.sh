@@ -13,7 +13,7 @@ set_defaults() {
   export PACKAGE_MANAGER="${PACKAGE_MANAGER:-npm}"
   export OVERRIDE_UPDATE_LOCK="${OVERRIDE_UPDATE_LOCK:-false}"
   export OLLAMA_HOST="${OLLAMA_HOST:-http://127.0.0.1:11434}"
-  export OLLAMA_MODEL="${OLLAMA_MODEL:-deepseek-r1:1.5b}"
+  export OLLAMA_MODEL="${OLLAMA_MODEL:-qwen2.5:0.5b}"
   export OLLAMA_MODELS="${OLLAMA_MODELS:-/opt/ollama}"
 }
 

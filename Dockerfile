@@ -45,7 +45,7 @@ ENV NODE_ENV=production \
     UID=1001 \
     GID=1001 \
     OLLAMA_HOST=http://127.0.0.1:11434 \
-    OLLAMA_MODEL=deepseek-r1:1.5b \
+    OLLAMA_MODEL=qwen2.5:0.5b \
     OLLAMA_MODELS=/opt/ollama
 
 WORKDIR /usr/src/app/
