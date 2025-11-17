@@ -1,0 +1,32 @@
+{
+	"ignores": [
+		"nodebb-*",
+		"@nodebb/*",
+		"eslint*",
+		"mocha",
+		"nyc",
+		"coveralls",
+		"grunt*",
+		"webpack*",
+		"sass",
+		"sass-embedded",
+		"sharp",
+		"@fontsource/*",
+		"@fortawesome/*",
+		"jquery*",
+		"textcomplete*",
+		"@textcomplete/*"
+	],
+	"ignoreDirs": [
+		"coverage",
+		"install",
+		"public",
+		"vendor",
+		"test",
+		"logs",
+		".husky",
+		".git",
+		".github",
+		"node_modules"
+	]
+}
